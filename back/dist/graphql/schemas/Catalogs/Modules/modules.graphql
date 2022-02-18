@@ -1,0 +1,57 @@
+input moduleInput {
+  name: String!
+  relative_link: String!
+  front_label: String!
+  icon: String!
+}
+
+input submoduleInput {
+  id: Int!
+  name: String!
+  front_label: String!
+  relative_link: String!
+  icon: String!
+}
+
+type Module {
+  id: Int!
+  name: String!
+  front_label: String!
+  relative_link: String!
+  icon: String!
+  submodules: [Submodule]
+}
+
+type Submodule {
+  id: Int!
+  module_id: Int!
+  name: String!
+  front_label: String!
+  icon: String!
+  relative_link: String!
+}
+
+type ModuleRowsCount {
+  rows: [Module!]!
+  count: Int
+}
+
+type Query {
+  getAllModules(searchQuery: String, limit: Int, offset: Int): ModuleRowsCount
+  getOneModule(id: Int!): Module!
+}
+
+type Mutation {
+  getAllModulesExport: [Module]
+  createModule(
+    moduleInput: moduleInput!
+    submoduleInput: [submoduleInput]!
+  ): Module!
+  updateModule(
+    submodulesIdsTodelete: [Int]!
+    moduleId: Int!
+    moduleInput: moduleInput!
+    submoduleInput: [submoduleInput]!
+  ): Module!
+  deleteModule(id: Int!): Boolean!
+}

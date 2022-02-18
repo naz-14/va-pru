@@ -1,0 +1,43 @@
+input userModuleInput {
+  id_user: Int!
+  id_module: Int!
+  id_submodule: Int
+  access_retrieve: Boolean!
+  access_read: Boolean!
+  access_edit: Boolean!
+  access_delete: Boolean!
+  access_export: Boolean!
+}
+type moduleInfo {
+  id: Int!
+  name: String!
+  front_label: String!
+  relative_link: String!
+  icon: String!
+}
+type submoduleInfo {
+  id: Int!
+  name: String!
+  front_label: String!
+  relative_link: String!
+  icon: String!
+}
+
+type userModule {
+  id: Int!
+  id_module: Int!
+  module_info: moduleInfo
+  id_submodule: Int
+  submodule_info: submoduleInfo
+  access_retrieve: Boolean!
+  access_read: Boolean!
+  access_edit: Boolean!
+  access_delete: Boolean!
+  access_export: Boolean!
+}
+
+type Mutation {
+  createUserPermission(userID: Int!, modules: [userModuleInput!]!): Boolean!
+  updateUserPermission(userID: Int!, modules: [userModuleInput!]!): Boolean!
+  getAllUserPermissions(userID: Int!): [userModule!]!
+}

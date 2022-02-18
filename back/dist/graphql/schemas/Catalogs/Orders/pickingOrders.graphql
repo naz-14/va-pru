@@ -1,0 +1,12 @@
+type Query{
+    getPickingOrders(
+        searchQuery: String
+        limit: Int
+        offset: Int
+        platform: Int
+    ): OrderRowsCount
+}
+
+type Mutation {
+    changeToPicking(order_id: Int!): Order
+}

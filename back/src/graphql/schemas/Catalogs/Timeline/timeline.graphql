@@ -1,0 +1,14 @@
+type Timeline {
+  id: Int!
+  order_id: Int!
+  status_id: Int!
+  user_id: Int!
+  dateStatus: String!
+
+  status: Status
+  user: UserDetails
+}
+
+type Query {
+  getTimeline(id: Int!): [Timeline]
+}

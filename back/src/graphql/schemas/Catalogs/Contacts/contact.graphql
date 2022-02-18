@@ -1,0 +1,28 @@
+type contactsCatalog {
+  id: Int!
+  name: String!
+  lastname: String!
+  second_lastname: String
+  phone: String!
+  ext: String
+  mobile: String!
+  email: String!
+  id_user_register: Int
+  id_user_update: Int
+  id_user_delete: Int
+  active: Boolean
+}
+
+input contactInput {
+  name: String!
+  lastname: String!
+  second_lastname: String
+  phone: String!
+  ext: String
+  mobile: String!
+  email: String!
+  id_user_register: Int
+  id_user_update: Int
+  id_user_delete: Int
+  active: Boolean
+}

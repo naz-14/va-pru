@@ -1,0 +1,8 @@
+type platformCatalog {
+  id: Int!
+  name: String!
+}
+
+type Mutation {
+  createPlatform(name: String!): platformCatalog
+}

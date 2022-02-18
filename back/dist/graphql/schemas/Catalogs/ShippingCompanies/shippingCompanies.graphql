@@ -1,0 +1,8 @@
+type companies {
+  id: Int!
+  name: String!
+}
+
+type Query {
+  getAllShippingCompanies: [companies]!
+}

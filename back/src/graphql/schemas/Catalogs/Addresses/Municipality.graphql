@@ -1,0 +1,6 @@
+type municipalitiesCatalog {
+  id: Int!
+  name: String!
+  id_city: Int!
+  active: Boolean
+}

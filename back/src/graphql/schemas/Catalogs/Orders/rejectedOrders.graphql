@@ -1,0 +1,13 @@
+type Query{
+  getRejectedOrders(
+    searchQuery: String
+    limit: Int
+    offset: Int
+    platform: Int
+  ): OrderRowsCount
+}
+
+type Mutation {
+  changeToRejected(order_id: Int!, id_reason: Int!): Order
+  changeToReturned(order_id: Int!): Order
+}
