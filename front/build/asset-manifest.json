@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.48457c76.chunk.css",
+    "main.js": "/static/js/main.4239ec4b.chunk.js",
+    "main.js.map": "/static/js/main.4239ec4b.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.d31e291f.js",
+    "runtime-main.js.map": "/static/js/runtime-main.d31e291f.js.map",
+    "static/css/2.4b327a5e.chunk.css": "/static/css/2.4b327a5e.chunk.css",
+    "static/js/2.4b454aa5.chunk.js": "/static/js/2.4b454aa5.chunk.js",
+    "static/js/2.4b454aa5.chunk.js.map": "/static/js/2.4b454aa5.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.4b327a5e.chunk.css.map": "/static/css/2.4b327a5e.chunk.css.map",
+    "static/css/main.48457c76.chunk.css.map": "/static/css/main.48457c76.chunk.css.map",
+    "static/js/2.4b454aa5.chunk.js.LICENSE.txt": "/static/js/2.4b454aa5.chunk.js.LICENSE.txt",
+    "static/media/Global.scss": "/static/media/user.d8bf3169.svg",
+    "static/media/avatar-default.d04e51c6.svg": "/static/media/avatar-default.d04e51c6.svg",
+    "static/media/bebida.6d143add.jpg": "/static/media/bebida.6d143add.jpg",
+    "static/media/load.03efd336.svg": "/static/media/load.03efd336.svg",
+    "static/media/vinos-america-logo-01.9362df42.svg": "/static/media/vinos-america-logo-01.9362df42.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d31e291f.js",
+    "static/css/2.4b327a5e.chunk.css",
+    "static/js/2.4b454aa5.chunk.js",
+    "static/css/main.48457c76.chunk.css",
+    "static/js/main.4239ec4b.chunk.js"
+  ]
+}

@@ -1,0 +1,66 @@
+// Paleta de colores
+$gray-dark: #000; // sidebar, headings, gray dark
+$gray-dark-hover: #555454; // sidebar, headings, gray dark
+$gray-dark-border: rgb(239, 239, 239); // sidebar, headings, gray dark
+
+$light-white: rgb(239, 239, 239); //content area background, light
+
+$secondary: #555454; // cuerpos de texto, secondary
+$primary: #000; //opción del menú lateral activa y highlights, primary
+
+$info: #3c5ba3; //Info
+$info-hover: #2e457a; //Info
+$info-border: #1e3670; //Info
+
+$danger: #c3353f; // Danger
+$danger-hover: #912930; // Danger
+$danger-border: #bd2c35; // Danger
+
+$card-header: $primary;
+
+$btn-accept-color: #707070;
+$btn-accept-hover: #4b4b4b;
+$btn-accept-border: #413e3e;
+
+$light-yellow:#FFD281;
+$light-yellow-hover: #ffc760;
+
+$btn-accept-txtcolor: $light-white;
+$btn-info-txtcolor: $light-white;
+$btn-danger-txtcolor: $light-white;
+
+$text-color: #1c1c1c;
+$checkbox-colorBG: $text-color;
+
+$menu-hover-colorBG: rgba(131, 131, 131, 0.555);
+$menu-active-txtcolor: #fff;
+$menu-hover-txtcolor: #fff;
+
+$sidebar-bg-color: #efefef;
+$menu-active-color: #d5d5d5;
+$submenu-active-color: $text-color;
+$layout-table-content-color: #707070;
+$badge-color: $menu-active-color;
+$badge-text-color: $text-color;
+
+$login-bg-color: #efefef;
+$login-box-inputs-color: #efefef;
+$login-text-color: #707070;
+
+// Font
+@font-face {
+  font-family: 'Moderat';
+  src: url('./../Assets/Fonts/Moderat/Moderat-Regular.ttf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Moderat';
+  src: url('./../Assets/Fonts/Moderat/Moderat-Bold.ttf');
+  font-weight: bold;
+  font-display: swap;
+}
+
+$font: 'Moderat';
