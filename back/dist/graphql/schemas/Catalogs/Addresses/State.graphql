@@ -1,6 +1,0 @@
-type statesCatalog {
-  id: Int!
-  name: String!
-  id_country: Int
-  active: Boolean
-}

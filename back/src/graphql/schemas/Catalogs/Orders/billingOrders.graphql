@@ -8,5 +8,9 @@ type Query {
 }
 
 type Mutation {
-  changeToBilling(order_id: Int!, shipping_compay_id: Int!): Order
+  changeToBilling(
+    order_id: Int!
+    shipping_company_id: Int!
+    uploadReceipt: Upload!
+  ): Order
 }

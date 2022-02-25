@@ -5,7 +5,7 @@ type InternalNotes {
   text: String
   file_id: Int
   type: String
-
+  createdAt: String!
   user: UserDetails
   fileInternal: typeFile
 }

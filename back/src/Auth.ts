@@ -20,7 +20,6 @@ export default (request: any) => {
     return { isAuth: false }
   }
   if (decodeToken.id_type) {
-    console.log('decodeToken.id_type', decodeToken.id_type)
     return {
       isAuth: true,
       userId: decodeToken.id,
@@ -29,8 +28,6 @@ export default (request: any) => {
       email: decodeToken.email,
     }
   }
-  console.log('decodeToken.id_type', decodeToken.id_type)
-
   return {
     isAuth: true,
     userId: decodeToken.id,

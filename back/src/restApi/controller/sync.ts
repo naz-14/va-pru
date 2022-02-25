@@ -9,8 +9,6 @@ import Store from '../../models/Catalogs/Stores/StoreModel'
 import Warehouse from '../../models/Catalogs/Warehouses/WarehouseModel'
 
 export const syncController = async (req: Request, res: Response) => {
-  console.log('=== req ===')
-  console.log(req.body)
   if (req.body.status === 'processing') {
     await WoocommerceWebHookSync(req.body)
   }
@@ -62,7 +60,7 @@ interface IOrderProduct {
 const WoocommerceSync = async () => {
   try {
     const lastOrders = await wooapiTest.get(
-      `orders?status=${'processing'}&per_page=${20}&page=${1}`
+      `orders?status=${'processing'}&per_page=${40}&page=${1}`
     )
     if (lastOrders.status === 200) {
       if (lastOrders.data.length == 0) {
@@ -72,7 +70,6 @@ const WoocommerceSync = async () => {
         }
       }
       const ordersFromWoocommerce = lastOrders.data
-      console.log(ordersFromWoocommerce)
       ordersFromWoocommerce.forEach((order: any) =>
         console.log(order.shipping_lines)
       )

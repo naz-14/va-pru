@@ -15,7 +15,7 @@ interface OrderAttributes {
   shipping_id: number
   payment_id: number
   innvoice_id: number
-  shipping_compay_id: number
+  shipping_company_id: number
   uber_id: string | null
   product_quantity: number
   shipping_price: number
@@ -35,7 +35,7 @@ interface OrderCreationAttributes
     | 'warehouse_id'
     | 'store_id'
     | 'uber_id'
-    | 'shipping_compay_id'
+    | 'shipping_company_id'
   > {}
 
 class Order
@@ -55,7 +55,7 @@ class Order
   public shipping_id!: number
   public payment_id!: number
   public innvoice_id!: number
-  public shipping_compay_id!: number
+  public shipping_company_id!: number
   public uber_id!: string
   public product_quantity!: number
   public total_price!: number
@@ -124,7 +124,7 @@ Order.init(
       allowNull: true,
       defaultValue: null,
     },
-    shipping_compay_id: {
+    shipping_company_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       defaultValue: null,
@@ -151,7 +151,7 @@ Order.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
-    }
+    },
   },
   {
     sequelize,

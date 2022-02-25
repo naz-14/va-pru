@@ -19,7 +19,8 @@ type Order {
   method_id: Int!
   method: Method
   shipping_id: Int!
-  shipping_compay_id: Int
+  shippingCompany: detailsCompany
+  shipping_company_id: Int
   shipping: Shipping
   payment_id: Int!
   payment: Payment
@@ -28,6 +29,31 @@ type Order {
   total_price: Float!
   shipping_price: Float!
   products: [Product]
+}
+
+type OrderExport{
+  id: Int!
+  order_date: String
+  platform_id: Int!
+  platform_name: String
+  type_id: Int!
+  type_name: String
+  payment_id: Int!
+  id_payment: String
+  platform: String
+  shipping_id: Int!
+  shipping_first_name: String
+  shipping_last_name: String
+  order_id: Int
+  store_id: Int
+  store_name: String
+  warehouse_id: Int
+  warehouse_name: String
+}
+
+type detailsCompany {
+  id: Int!
+  name: String!
 }
 
 type Platform {
@@ -57,7 +83,7 @@ type UserDetails {
   name: String!
 }
 
-type IssusesDetails{
+type IssusesDetails {
   id: Int!
   name: String!
 }
@@ -99,6 +125,8 @@ type Shipping {
   country: String!
   email: String!
   phone: String!
+  id_file_receipt: Int
+  receipt: typeFile
 }
 
 type Payment {
@@ -118,6 +146,8 @@ type Product {
   price: Float!
   total: Float!
   variation_id: Int
+  picked: Boolean
+  packed: Boolean
 }
 
 type woocommerceOrder {
@@ -152,10 +182,20 @@ type Query {
   getAllOrders: [woocommerceOrder!]!
   # getPendingOrders: [Order]
   getOrderById(id: Int!): Order
+  getOrderByIdAndStatus(id: Int!, status_id: [Int], type_id: Int): Order
   getOneOrder(id: Int!): woocommerceOrder!
-  getAllStatusesOrders:[Status!]!
+  getAllStatusesOrders: [Status!]!
 }
 
 type Mutation {
-  getAllPendingExport: [Order]
+  getAllPendingExport: [OrderExport!]!
+  getAllProcessExport: [OrderExport!]!
+  getAllBillingExport: [OrderExport!]!
+  getAllToStockExport: [OrderExport!]!
+  getAllLocalExport: [OrderExport!]!
+  getAllNationalExport: [OrderExport!]!
+  getAllShippedExport: [OrderExport!]!
+  getAllRejectedExport: [OrderExport!]!
+  getAllInRouteExport: [OrderExport!]!
+  getAllCollectExport: [OrderExport!]!
 }

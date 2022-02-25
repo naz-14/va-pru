@@ -16,7 +16,11 @@ import StateModel from './../../../../models/Catalogs/Addresses/Sepomex/StateMod
 import CityModel from '../../../../models/Catalogs/Addresses/Sepomex/CitieModel'
 import MunicipalityModel from '../../../../models/Catalogs/Addresses/Sepomex/MunicipalityModel'
 import ColonyModel from '../../../../models/Catalogs/Addresses/Sepomex/ColonyModel'
-import { UploadFile, CleanPreviousFile } from '../../../../helpers/UploadFile'
+import {
+  UploadDocument,
+  DeletePreviousFile,
+  getFile,
+} from '../../../../helpers/UploadFile'
 
 interface UserData {
   id: number
@@ -50,6 +54,8 @@ const userEmailExists = 'Ya existe un perfil con ese nombre de usuario o email'
 const userNotFound = 'El usuario no existe'
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos'
 const invalidPassword = 'La contraseña es invalida verifica que sea la correcta'
+
+let GLOBAL_FILE_IF_FAILS = ''
 
 const UserResolver: Resolvers = {
   Upload: GraphQLUpload,
@@ -277,7 +283,7 @@ const UserResolver: Resolvers = {
           return createdContact.id as number
         })
 
-        const userAvatar = await UploadFile({
+        const userAvatar = await UploadDocument({
           file: inputAvatar,
           type: 'img',
           userID: context.userId,
@@ -286,6 +292,9 @@ const UserResolver: Resolvers = {
         if (!userAvatar) {
           return Promise.reject(Error(defaultError))
         }
+
+        GLOBAL_FILE_IF_FAILS = userAvatar.url
+
         const user = await User.create(
           {
             password,
@@ -386,9 +395,13 @@ const UserResolver: Resolvers = {
             { transaction }
           )
         }
+
         await transaction.commit()
         return user as UserReturn
       } catch (error) {
+        await DeletePreviousFile({
+          previous: GLOBAL_FILE_IF_FAILS,
+        })
         await transaction.rollback()
         return Promise.reject(Error(defaultError))
       }
@@ -406,7 +419,6 @@ const UserResolver: Resolvers = {
           })
           if (isMaster) {
             await transaction.rollback()
-
             return Promise.reject(Error(userNotFound))
           }
         }
@@ -468,7 +480,7 @@ const UserResolver: Resolvers = {
             id_user_update: id_user_update_input,
             is_active: true,
           },
-          { where: { id: userID, is_active: true } }
+          { where: { id: userID, is_active: true }, transaction }
         )
 
         const {
@@ -556,35 +568,27 @@ const UserResolver: Resolvers = {
             { transaction }
           )
         }
-
         if (inputAvatar) {
-          const userAvatar = await UploadFile({
-            file: inputAvatar,
-            type: 'img',
-            userID: context.userId,
-            transaction: transaction,
-          })
-          if (!userAvatar) {
-            return Promise.reject(Error(defaultError))
-          }
-          await User.update(
-            {
-              id_avatar_file: userAvatar.id,
-            },
-            { where: { id: userID, is_active: true } }
-          )
-
           const fileName = await FileModel.findOne({
             where: { is_active: true, id: userFound.id_avatar_file },
           })
+
           if (fileName) {
-            const cleanStatus = await CleanPreviousFile({
-              previous: fileName.url,
+            const userAvatar = await UploadDocument({
+              file: inputAvatar,
+              type: 'img',
+              userID: context.userId,
+              transaction: transaction,
+              idFile: userFound.id_avatar_file,
             })
-            if (!cleanStatus) {
-              await transaction.rollback()
+
+            if (!userAvatar) {
               return Promise.reject(Error(defaultError))
             }
+
+            await DeletePreviousFile({
+              previous: fileName.url,
+            })
           } else {
             await transaction.rollback()
             return Promise.reject(Error(defaultError))
@@ -595,6 +599,9 @@ const UserResolver: Resolvers = {
 
         return true
       } catch (error) {
+        await DeletePreviousFile({
+          previous: GLOBAL_FILE_IF_FAILS,
+        })
         await transaction.rollback()
         return Promise.reject(Error(defaultError))
       }
@@ -671,21 +678,26 @@ const UserResolver: Resolvers = {
         })
 
         if (avatarFound) {
-          const userAvatar = await UploadFile({
+          const userAvatar = await UploadDocument({
             file: avatar,
             type: 'img',
             userID: context.userId,
             transaction: transaction,
+            idFile: avatarFound.id,
           })
+
           if (!userAvatar) {
-            await transaction.rollback()
             return Promise.reject(Error(defaultError))
           }
           await User.update(
             { id_avatar_file: userAvatar.id },
             { where: { id: id_user, is_active: true }, transaction }
           )
+          await DeletePreviousFile({
+            previous: avatarFound.url,
+          })
         }
+
         await transaction.commit()
         return true
       } catch (error) {
@@ -735,9 +747,16 @@ const UserResolver: Resolvers = {
       })
     },
     avatar: async ({ id_avatar_file }) => {
-      return (await FileModel.findOne({
+      const file = await FileModel.findOne({
         where: { id: id_avatar_file, is_active: true },
-      })) as unknown as TypeAvatar
+      })
+
+      if (file) {
+        const url = await getFile(file.url)
+        return { id: file.id, url: url } as TypeAvatar
+      } else {
+        return null
+      }
     },
   },
   userContacts: {

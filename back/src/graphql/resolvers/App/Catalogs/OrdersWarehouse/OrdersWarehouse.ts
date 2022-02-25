@@ -18,10 +18,46 @@ interface WarehouseProduct {
   rack: string
 }
 
+import { PubSub } from 'graphql-subscriptions'
+import SapItems from '../../../../../models/Catalogs/SAP/Items/SapItemsModel'
+import Timeline from '../../../../../models/Catalogs/Timeline/TimelineModel'
+import moment from 'moment'
+
+const pubsub = new PubSub()
+
 const OrdersWarehouseResolver: Resolvers = {
+  Subscription: {
+    pickingOrderChanged: {
+      subscribe: (_, __) => {
+        return pubsub.asyncIterator('pickingOrderChanged')
+      },
+    },
+    pickingOrderCompleted: {
+      subscribe: (_, __) => {
+        return pubsub.asyncIterator('pickingOrderCompleted')
+      },
+    },
+    packingOrderChanged: {
+      subscribe: (_, __) => {
+        return pubsub.asyncIterator('packingOrderChanged')
+      },
+    },
+    packingOrderCompleted: {
+      subscribe: (_, __) => {
+        return pubsub.asyncIterator('packingOrderCompleted')
+      },
+    },
+  },
   Query: {
     getAllAppOrderWarehouses: async (_, {}, context) => {
-      return await OrdersWarehouse.findAll()
+      return await OrdersWarehouse.findAll({
+        where: {
+          open: true,
+          picking_user_id: {
+            [Op.eq]: null,
+          },
+        },
+      })
     },
     getAllAppOrderWarehousesPacking: async (_, {}, context) => {
       return await OrdersWarehouse.findAll({
@@ -29,12 +65,17 @@ const OrdersWarehouseResolver: Resolvers = {
           picking_user_id: {
             [Op.ne]: null,
           },
+          packing_user_id: {
+            [Op.eq]: null,
+          },
           rack_id: {
             [Op.ne]: null,
           },
+          open: true,
         },
       })
     },
+
     getAppOrderWarehouseById: async (_, { id }, context) => {
       try {
         const order = await OrdersWarehouse.findOne({ where: { id } })
@@ -104,6 +145,22 @@ const OrdersWarehouseResolver: Resolvers = {
         where: { warehouse_order_id: id },
       })
     },
+    getAppUserWarehouseOrders(_, { id }, context) {
+      return OrdersWarehouse.findAll({
+        where: {
+          picking_user_id: id,
+          open: false,
+        },
+      })
+    },
+    getAppUserWarehouseOrdersPacking(_, {}, context) {
+      return OrdersWarehouse.findAll({
+        where: {
+          packing_user_id: context.userId,
+          open: false,
+        },
+      })
+    },
   },
   AppOrderWarehouse: {
     order: async ({ order_id }) => {
@@ -125,21 +182,57 @@ const OrdersWarehouseResolver: Resolvers = {
         order.open = false
         order.picking_user_id = context.userId
         await order.save()
+        pubsub.publish('pickingOrderChanged', {
+          pickingOrderChanged: order,
+        })
+        return true
+      } else {
+        return false
+      }
+    },
+    changeOrderPackingToClose: async (_, { id }, context) => {
+      const order = await OrdersWarehouse.findOne({ where: { id } })
+      if (order) {
+        order.open = false
+        order.packing_user_id = context.userId
+        await order.save()
+        pubsub.publish('packingOrderChanged', {
+          packingOrderChanged: order,
+        })
         return true
       } else {
         return false
       }
     },
     changeMultipleOrdersToClose: async (_, { ids }, context) => {
-      const orders = await OrdersWarehouse.findAll({ where: { id: ids } })
+      const transaction = await sequelize.transaction()
+      const orders = await OrdersWarehouse.findAll({
+        where: { id: ids },
+      })
       if (orders.length === ids.length) {
         for (const order of orders) {
-          order.open = false
-          order.picking_user_id = context.userId
-          await order.save()
+          await order.update(
+            {
+              open: false,
+              picking_user_id: context.userId,
+            },
+            {
+              where: {
+                id: order.id,
+              },
+              transaction,
+            }
+          )
         }
+        await transaction.commit()
+        orders.forEach((order) => {
+          pubsub.publish('pickingOrderChanged', {
+            pickingOrderChanged: order.toJSON(),
+          })
+        })
         return true
       } else {
+        await transaction.rollback()
         return false
       }
     },
@@ -148,15 +241,23 @@ const OrdersWarehouseResolver: Resolvers = {
       { productSku, productBarcode, orderProductId },
       context
     ) => {
-      console.log(productSku, productBarcode, orderProductId)
       try {
         const orderProduct = await OrderProduct.findOne({
           where: { id: orderProductId },
         })
         if (orderProduct) {
-          orderProduct.picked = true
-          await orderProduct.save()
-          return true
+          const productValid = await SapItems.findOne({
+            where: {
+              item_code: productSku,
+              item_code_bar: productBarcode,
+            },
+          })
+          if (productValid) {
+            orderProduct.picked = true
+            await orderProduct.save()
+            return true
+          }
+          return false
         }
         return false
       } catch (e) {
@@ -164,23 +265,111 @@ const OrdersWarehouseResolver: Resolvers = {
       }
     },
     validateRack: async (_, { warehouseOrderId, rackCode }, context) => {
-      console.log(warehouseOrderId, rackCode)
-      return true
+      const transaction = await sequelize.transaction()
+      try {
+        const order = await OrdersWarehouse.findOne({
+          where: { id: warehouseOrderId },
+        })
+        if (order) {
+          await OrdersWarehouse.update(
+            {
+              open: true,
+              rack_id: rackCode,
+            },
+            { where: { id: warehouseOrderId }, transaction }
+          )
+          const principalOrder = await Order.findOne({
+            where: { id: order.order_id },
+          })
+          await Order.update(
+            {
+              status_id: 10,
+              user_id: context.user_id,
+            },
+            {
+              where: {
+                id: order.order_id,
+              },
+              transaction,
+            }
+          )
+          await Timeline.create(
+            {
+              user_id: context.userId,
+              order_id: principalOrder!.order_id,
+              status_id: 10,
+              dateStatus: moment().format('YYYY-MM-DD HH:mm:ss'),
+              is_active: true,
+            },
+            { transaction }
+          )
+          await transaction.commit()
+          pubsub.publish('pickingOrderCompleted', {
+            pickingOrderCompleted: order,
+          })
+          return true
+        }
+        return false
+      } catch (e) {
+        return false
+      }
+    },
+    validateRackMultiOrder: async (
+      _,
+      { warehouseOrderId, rackCode },
+      context
+    ) => {
+      const transaction = await sequelize.transaction()
+      try {
+        let orders = await OrdersWarehouse.findAll({
+          where: { id: warehouseOrderId },
+        })
+        for (const order of warehouseOrderId) {
+          await OrdersWarehouse.update(
+            {
+              open: true,
+              rack_id: rackCode,
+            },
+            {
+              where: { id: order },
+              transaction,
+            }
+          )
+        }
+        await transaction.commit()
+        orders.forEach((order) => {
+          pubsub.publish('pickingOrderCompleted', {
+            pickingOrderCompleted: order.toJSON(),
+          })
+        })
+        return true
+      } catch (e) {
+        await transaction.rollback()
+        return false
+      }
     },
     validateProductPacking: async (
       _,
       { productSku, productBarcode, orderProductId },
       context
     ) => {
-      console.log(productSku, productBarcode, orderProductId)
       try {
         const orderProduct = await OrderProduct.findOne({
           where: { id: orderProductId },
         })
         if (orderProduct) {
-          orderProduct.packed = true
-          await orderProduct.save()
-          return true
+          const productValid = await SapItems.findOne({
+            where: {
+              item_code: productSku,
+              item_code_bar: productBarcode,
+            },
+          })
+          if (productValid) {
+            orderProduct.packed = true
+            await orderProduct.save()
+            return true
+          }
+          return false
         }
         return false
       } catch (e) {
@@ -203,6 +392,58 @@ const OrdersWarehouseResolver: Resolvers = {
         }
         await transaction.commit()
         return true
+      } catch (e) {
+        await transaction.rollback()
+        return false
+      }
+    },
+    changeOrderPackingToCompleted: async (_, { id }, context) => {
+      const transaction = await sequelize.transaction()
+      try {
+        const orderWarehouse = await OrdersWarehouse.findOne({
+          where: { id },
+        })
+        if (orderWarehouse) {
+          await OrdersWarehouse.update(
+            {
+              open: true,
+              packing_user_id: context.userId,
+            },
+            { where: { id }, transaction }
+          )
+          await Order.update(
+            {
+              status_id: 8,
+              user_id: context.userId,
+            },
+            {
+              where: { id: orderWarehouse.order_id },
+              transaction,
+            }
+          )
+          const principalOrder = await Order.findOne({
+            where: { id: orderWarehouse.order_id },
+          })
+          // timeline
+          await Timeline.create(
+            {
+              user_id: context.userId,
+              order_id: principalOrder!.order_id,
+              status_id: 8,
+              dateStatus: moment().format('YYYY-MM-DD HH:mm:ss'),
+              is_active: true,
+            },
+            { transaction }
+          )
+
+          await transaction.commit()
+          pubsub.publish('packingOrderCompleted', {
+            packingOrderCompleted: orderWarehouse.toJSON(),
+          })
+          return true
+        }
+        await transaction.rollback()
+        return false
       } catch (e) {
         await transaction.rollback()
         return false

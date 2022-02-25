@@ -1,20 +1,22 @@
-import { Resolvers } from "../../../generated";
+import { Resolvers } from '../../../generated'
 import { Op } from 'sequelize'
 import Order from '../../../../models/Catalogs/Orders/OrderModel'
 
 const localOrdersResolver: Resolvers = {
-  Query:{
-    getLocalOrders: async (_, { searchQuery, limit, offset, platform } ) =>{
+  Query: {
+    getLocalOrders: async (
+      _,
+      { searchQuery, limit, offset, platform },
+      context
+    ) => {
       const clause: any = {
         where: {
-          [Op.or]: [
-            {status_id: 2},
-            {status_id: 6},
-            {status_id: 7},
-            {status_id: 8}
-          ],
           type_id: 2,
         },
+      }
+
+      if (context.storeId) {
+        clause.where.store_id = context.storeId
       }
 
       if (limit !== null && offset !== null) {
@@ -38,4 +40,4 @@ const localOrdersResolver: Resolvers = {
   },
 }
 
-export default localOrdersResolver;
+export default localOrdersResolver

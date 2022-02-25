@@ -1,6 +1,7 @@
 type boxes {
     id: Int!
     name: String!
+    description: String!
     size: String!
     large: Int!
     height: Int!

@@ -1,9 +1,0 @@
-type configSys {
-  project_name: String!
-  project_logo: String!
-  project_mini_logo: String!
-  project_favicon: String!
-}
-type Query {
-  getConfigSys: configSys!
-}

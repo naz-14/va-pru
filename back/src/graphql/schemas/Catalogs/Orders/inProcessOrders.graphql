@@ -1,10 +1,10 @@
 type Query{
-    getInProcessOrders(
-        searchQuery: String
-        limit: Int
-        offset: Int
-        platform: Int
-    ): OrderRowsCount
+  getInProcessOrders(
+      searchQuery: String
+      limit: Int
+      offset: Int
+      platform: Int
+  ): OrderRowsCount
 }
 
 type Mutation {

@@ -42,7 +42,16 @@ import * as AppOrdersWarehouseTypeDefs from './schemas/App/Catalogs/OrdersWareho
 import * as ReasonsTypeDefs from './schemas/Catalogs/Reasons/reasons.graphql'
 import * as QuotesTypeDefs from './schemas/Catalogs/Quotes/quotes.graphql'
 import * as DocumentStatusTypeDefs from './schemas/Catalogs/Documents/documentStatus.graphql'
-
+import * as SapListPricesItemsTypeDefs from './schemas/Catalogs/SAP/ListPricesItems/sapListPricesItems.graphql'
+import * as SapListPricesTypeDefs from './schemas/Catalogs/SAP/ListPrices/sapListPrices.graphql'
+import * as SapItemsTypeDefs from './schemas/Catalogs/SAP/Items/sapItems.graphql'
+import * as SapBussinessPartnerTypeDefs from './schemas/Catalogs/SAP/BussinessPartner/sapBussinessPartner.graphql'
+import * as SapNumGroupTypeDefs from './schemas/Catalogs/SAP/NumGroup/sapNumGroup.graphql'
+import * as SapPartnerGroupTypeDefs from './schemas/Catalogs/SAP/PartnerGroup/sapPartnerGroup.graphql'
+import * as SapPurchasesOrdersTypeDefs from './schemas/Catalogs/SAP/PurchasesOrders/sapPurchasesOrders.graphql'
+import * as SapPurchasesOrdersLinesTypeDefs from './schemas/Catalogs/SAP/PurchasesOrdersLines/sapPurchasesOrdersLines.graphql'
+import * as SapWarehousesTypeDefs from './schemas/Catalogs/SAP/Warehouses/sapWarehouses.graphql'
+import * as BoxesTypeDefs from './schemas/Catalogs/Boxes/boxes.graphql'
 import { makeExecutableSchema } from 'graphql-tools'
 import resolversMap from './resolversMap'
 import { GraphQLSchema } from 'graphql'
@@ -92,6 +101,16 @@ const schema: GraphQLSchema = makeExecutableSchema({
     ReasonsTypeDefs,
     QuotesTypeDefs,
     DocumentStatusTypeDefs,
+    SapListPricesItemsTypeDefs,
+    SapListPricesTypeDefs,
+    SapItemsTypeDefs,
+    SapBussinessPartnerTypeDefs,
+    SapNumGroupTypeDefs,
+    SapPartnerGroupTypeDefs,
+    SapPurchasesOrdersTypeDefs,
+    SapPurchasesOrdersLinesTypeDefs,
+    SapWarehousesTypeDefs,
+    BoxesTypeDefs,
   ],
   resolvers: resolversMap,
 })

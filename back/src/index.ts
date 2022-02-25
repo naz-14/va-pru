@@ -12,24 +12,39 @@ import http from 'http'
 import bodyParser from 'body-parser'
 import syncRoutes from './restApi/router/syncRoutes'
 import stockRoutes from './restApi/router/stockRoutes'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
+import { execute, subscribe } from 'graphql'
+import { PubSub } from 'graphql-subscriptions'
+
 ;(async () => {
   try {
-    sequelize.sync({ alter: true })
+    sequelize.sync({ alter: false })
   } catch (e) {
     console.log(e)
   }
-
-  const PORT = process.env.PORT || 4000
-  const PORT_SSL = 443
+  const PORT = 4000
   const app = express()
   const server = new ApolloServer({
     schema,
+    plugins: [
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              subscriptionServer.close()
+            },
+          }
+        },
+      },
+    ],
     context: async (req) => {
       const auth = Auth(req)
       const path = pathRequest(req)
       // if (
       //   !auth?.isAuth &&
       //   req.req.body.operationName !== 'authUser' &&
+      //   req.req.body.operationName !== 'AuthAppUser' &&
+      //   req.req.body.operationName !== 'DecryptTokenApp' &&
       //   req.req.body.operationName !== 'CreateRecoveryToken' &&
       //   req.req.body.operationName !== 'checkTokenRecovery' &&
       //   req.req.body.operationName !== 'RecoveryUserPassword' &&
@@ -43,11 +58,13 @@ import stockRoutes from './restApi/router/stockRoutes'
       //   req.req.body.operationName !== 'checkTokenRecovery' &&
       //   req.req.body.operationName !== 'RecoveryUserPassword' &&
       //   req.req.body.operationName !== 'decryptToken' &&
+      //   req.req.body.operationName !== 'DecryptTokenApp' &&
       //   req.req.body.operationName !== 'getAllUserPermissions' &&
       //   req.req.body.operationName !== 'GetUserById' &&
       //   req.req.body.operationName !== 'AppConfig' &&
-      //   req.req.body.operationName !== 'GetAllCounters'
-      //   !auth.typeID
+      //   req.req.body.operationName !== 'GetAllCounters' &&
+      //   !auth.typeId &&
+      //   auth.isAuth
       // ) {
       //   const { havePermissions, path: relativePath } =
       //     await validatePermissions({
@@ -62,8 +79,30 @@ import stockRoutes from './restApi/router/stockRoutes'
       //   return { ...auth, path }
       // }
       // if (
-      //   req.req.body.operationName === 'authAppUser' ||
-      //   req.req.body.operationName === 'getPickingAppOrders'
+      //   req.req.body.operationName === 'AuthAppUser' ||
+      //   req.req.body.operationName === 'DecryptTokenApp' ||
+      //   req.req.body.operationName === 'GetAllAppOrderWarehousesPacking' ||
+      //   req.req.body.operationName === 'GetAppUserWarehouseOrdersPacking' ||
+      //   req.req.body.operationName === 'ChangeOrderPackingToClose' ||
+      //   req.req.body.operationName === 'GetAllBoxes' ||
+      //   req.req.body.operationName === 'CreateOrderWarehouseBoxes' ||
+      //   req.req.body.operationName === 'GetAppOrderWarehouseById' ||
+      //   req.req.body.operationName === 'PackingOrderChanged' ||
+      //   req.req.body.operationName === 'PackingOrderCompleted' ||
+      //   req.req.body.operationName === 'ValidateProductPacking' ||
+      //   req.req.body.operationName === 'ChangeOrderPackingToCompleted' ||
+      //   req.req.body.operationName === 'GetPickingAppOrders' ||
+      //   req.req.body.operationName === 'GetAllAppOrderWarehouses' ||
+      //   req.req.body.operationName === 'GetAppOrderWarehouseById' ||
+      //   req.req.body.operationName === 'GetAppOderWarehouseByMultiIds' ||
+      //   req.req.body.operationName === 'IsOrderOpen' ||
+      //   req.req.body.operationName === 'ChangeOrderToClose' ||
+      //   req.req.body.operationName === 'ChangeMultipleOrdersToClose' ||
+      //   req.req.body.operationName === 'ValidateProduct' ||
+      //   req.req.body.operationName === 'ValidateRack' ||
+      //   req.req.body.operationName === 'PickingOrderChanged' ||
+      //   req.req.body.operationName === 'GetAppUserWarehouseOrders' ||
+      //   req.req.body.operationName === 'PickingOrderCompleted'
       // ) {
       //   return auth
       // } else {
@@ -73,55 +112,27 @@ import stockRoutes from './restApi/router/stockRoutes'
     },
   })
   await server.start()
-
   app.use(graphqlUploadExpress())
   server.applyMiddleware({ app, path: '/graphql' })
-  app.use('/files', express.static('./public/files'))
   app.use(bodyParser.urlencoded({ extended: true }))
   app.use(bodyParser.json())
   app.use('/sync', syncRoutes)
   app.use('/stock', stockRoutes)
   const httpServer = http.createServer(app)
-  httpServer.listen(PORT, () => {
-    console.log(
-      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-    )
-  })
-
-  // const configurations = {
-  //   production: {
-  //     ssl: true,
-  //     port: PORT_SSL,
-  //     hostname: 'localhost',
-  //   },
-  //   development: { ssl: false, port: PORT, hostname: 'localhost' },
-  // }
-  // const config = configurations['development']
-  // Create the HTTPS or HTTP server, per configuration
-  // if (config.ssl) {
-  // Assumes certificates are in a .ssl folder off of the package root.
-  // Make sure these files are secured.
-  // const httpServer = https.createServer(
-  //   {
-  //     key: fs.readFileSync(`./ssl/ssl.key`),
-  //     cert: fs.readFileSync(`./ssl/ssl.crt`),
-  //   },
-  //   app
-  // )
-  // await new Promise<void>((resolve) =>
-  //   httpServer.listen({ port: config.port }, resolve)
-  // )
-
-  //   const httpServer = http.createServer(app)
-  //   await new Promise<void>((resolve) =>
-  //     httpServer.listen({ port: config.port }, resolve)
+  const subscriptionServer = SubscriptionServer.create(
+    {
+      schema,
+      execute,
+      subscribe,
+    },
+    {
+      server: httpServer,
+      path: '/graphql',
+    }
+  )
   //   )
   // }
-
-  // console.log(
-  //   'Graphql server runing on: ',
-  //   `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
-  //     server.graphqlPath
-  //   }`
-  // )
+  httpServer.listen(PORT, () => {
+    console.log('Graphql server runing on: ')
+  })
 })()

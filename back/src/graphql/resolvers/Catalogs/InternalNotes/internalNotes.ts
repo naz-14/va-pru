@@ -2,9 +2,10 @@ import sequelize from '../../../../db/connection'
 import InternalNotes from '../../../../models/Catalogs/InternalNotes/InternalNotesModel'
 import User from '../../../../models/Users/UserModel'
 import FileModel from '../../../../models/Files/FileModel'
-import { Resolvers } from '../../../generated'
+import { Resolvers, TypeFile } from '../../../generated'
 import { GraphQLUpload } from 'graphql-upload'
-import { UploadDoc } from '../../../../helpers/UploadFile'
+import { UploadDocument, getFile } from '../../../../helpers/UploadFile'
+import moment from 'moment'
 
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos'
 
@@ -19,6 +20,7 @@ const internalNotesResolver: Resolvers = {
         },
         order: [['createdAt', 'ASC']],
       }
+
       return await InternalNotes.findAll(clause)
     },
   },
@@ -33,7 +35,7 @@ const internalNotesResolver: Resolvers = {
           typeFile = 'image'
 
         if (file) {
-          const documentInternal = await UploadDoc({
+          const documentInternal = await UploadDocument({
             file,
             type,
             userID: user_id,
@@ -41,9 +43,9 @@ const internalNotesResolver: Resolvers = {
           })
 
           if (!documentInternal) {
-            await transaction.rollback()
             return Promise.reject(Error(defaultError))
           }
+
           await InternalNotes.create(
             {
               user_id,
@@ -51,6 +53,7 @@ const internalNotesResolver: Resolvers = {
               text,
               type: typeFile,
               file_id: documentInternal.id,
+              createdAt: moment().format(),
               is_active: true,
             },
             { transaction }
@@ -66,6 +69,7 @@ const internalNotesResolver: Resolvers = {
             text,
             type: typeFile,
             file_id: null,
+            createdAt: moment().format(),
             is_active: true,
           },
           { transaction }
@@ -83,7 +87,13 @@ const internalNotesResolver: Resolvers = {
       return await User.findOne({ where: { id: user_id } })
     },
     fileInternal: async ({ file_id }) => {
-      return await FileModel.findOne({ where: { id: file_id } })
+      const file = await FileModel.findOne({ where: { id: file_id } })
+      if (file) {
+        const url = await getFile(file.url)
+        return { id: file.id, url: url } as TypeFile
+      } else {
+        return null
+      }
     },
   },
 }

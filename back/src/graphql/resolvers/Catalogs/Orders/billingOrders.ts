@@ -1,35 +1,40 @@
-import { Resolvers } from "../../../generated";
+import { Resolvers } from '../../../generated'
 import { Op } from 'sequelize'
 import Order from '../../../../models/Catalogs/Orders/OrderModel'
-import ShippingCompanies from "../../../../models/Catalogs/ShippingCompanies/ShippingCompanies";
-import { TimeLineAdd } from "../../../../helpers/TimeLineAdd";
-import sequelize from "../../../../db/connection";
+import ShippingCompanies from '../../../../models/Catalogs/ShippingCompanies/ShippingCompanies'
+import ShippingOrders from '../../../../models/Catalogs/Orders/OrderShippingModel'
+import { TimeLineAdd } from '../../../../helpers/TimeLineAdd'
+import sequelize from '../../../../db/connection'
+import { UploadDocument } from '../../../../helpers/UploadFile'
+
+const orderNotFound = 'No se encontro el pedido'
+const logisticNotFound = 'No se encontro el empresa de logística'
+const defaultError = 'Algo salio mal, vuelve a intentar'
 
 const billingOrdersResolver: Resolvers = {
-  Query:{
-    getBillingOrders: async (_, { searchQuery, limit, offset, platform }, context) =>{
+  Query: {
+    getBillingOrders: async (
+      _,
+      { searchQuery, limit, offset, platform },
+      context
+    ) => {
       const clause: any = {
-        where: {},
+        where: { status_id: 3 },
       }
-      
-      if (context.roleId === 4) {
-        clause.where[Op.and] = [
-          {status_id: 3},
-          {store_id: context.storeId}
-        ]
-      } else {
-        clause.where = {status_id: 3}
+
+      if (context.storeId) {
+        clause.where.store_id = context.storeId
       }
 
       if (limit !== null && offset !== null) {
         clause.offset = offset
         clause.limit = limit
       }
-      
+
       if (platform !== null) {
         clause.where.platform_id = platform
       }
-      
+
       if (searchQuery) {
         clause.where[Op.or] = [
           // { status_id: { [Op.like]: `%${searchQuery}%` } },
@@ -41,7 +46,11 @@ const billingOrdersResolver: Resolvers = {
     },
   },
   Mutation: {
-    changeToBilling: async (_, { order_id, shipping_compay_id }, context) => {
+    changeToBilling: async (
+      _,
+      { order_id, shipping_company_id, uploadReceipt },
+      context
+    ) => {
       const transaction = await sequelize.transaction()
       try {
         const { userId } = context
@@ -52,33 +61,62 @@ const billingOrdersResolver: Resolvers = {
           },
         })
         if (!order) {
-          return Promise.reject(Error('No se encontro el pedido'))
+          await transaction.rollback()
+          return Promise.reject(Error(orderNotFound))
         }
         const shippingCompany = await ShippingCompanies.findOne({
           where: {
-            id: shipping_compay_id,
+            id: shipping_company_id,
           },
         })
         if (!shippingCompany) {
-          return Promise.reject(Error('No se encontro el empresa de logistica'))
+          await transaction.rollback()
+          return Promise.reject(Error(logisticNotFound))
         }
-        
-        const timeLineCreate = await TimeLineAdd({orderId:order_id, userId, transaction})
-        if(!timeLineCreate) return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
 
-        await order.update({
-          status_id: 3,
-          user_id: userId,
-          shipping_compay_id
+        const timeLineCreate = await TimeLineAdd({
+          orderId: order.order_id,
+          statusId: 3,
+          userId: context.userId,
+          transaction,
         })
-        
+        if (!timeLineCreate) {
+          return Promise.reject(Error(defaultError))
+        }
+        await order.update(
+          {
+            status_id: 3,
+            user_id: userId,
+            shipping_company_id,
+          },
+          { where: { order_id }, transaction }
+        )
+
+        // const uploadedReceipt = await UploadDocument({
+        //   file: uploadReceipt,
+        //   type: 'pdf',
+        //   userID: userId,
+        //   transaction,
+        // })
+        //
+        // if (!uploadedReceipt) {
+        //   return Promise.reject(Error(defaultError))
+        // }
+
+        // await ShippingOrders.update(
+        //   {
+        //     id_file_receipt: uploadedReceipt.id,
+        //   },
+        //   { where: { order_id }, transaction }
+        // )
+        await transaction.commit()
         return order
       } catch (error) {
         await transaction.rollback()
-        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+        return Promise.reject(Error(defaultError))
       }
     },
   },
 }
 
-export default billingOrdersResolver;
+export default billingOrdersResolver

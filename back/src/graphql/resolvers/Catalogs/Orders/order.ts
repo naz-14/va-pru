@@ -1,6 +1,6 @@
 import sequelize from '../../../../db/connection'
-import { Resolvers } from '../../../generated'
-import { Op } from 'sequelize'
+import { Resolvers, TypeFile } from '../../../generated'
+import { Op, where } from 'sequelize'
 import Order from '../../../../models/Catalogs/Orders/OrderModel'
 import Platform from '../../../../models/Platforms/PlatformsModel'
 import Store from '../../../../models/Catalogs/Stores/StoreModel'
@@ -16,7 +16,10 @@ import Issusses from '../../../../models/Catalogs/Issusses/IssussesModel'
 import Reasons from '../../../../models/Catalogs/Reason/ReasonModel'
 import User from '../../../../models/Users/UserModel'
 import ShippingCompanies from '../../../../models/Catalogs/ShippingCompanies/ShippingCompanies'
-import { TimeLineAdd } from '../../../../helpers/TimeLineAdd'
+import FileModel from '../../../../models/Files/FileModel'
+import { getFile } from '../../../../helpers/UploadFile'
+
+const orderNotFound = 'No se encontro esta orden o ha cambiado de estatus'
 
 const woocommerceResolver: Resolvers = {
   Query: {
@@ -25,12 +28,15 @@ const woocommerceResolver: Resolvers = {
       { limit, offset, searchQuery, platform },
       context
     ) => {
-      console.log('getPendingOrders')
       try {
         const clause: any = {
           where: {
             status_id: 1,
           },
+        }
+
+        if (context.storeId) {
+          clause.where.store_id = context.storeId
         }
 
         if (limit !== null && offset !== null) {
@@ -48,14 +54,35 @@ const woocommerceResolver: Resolvers = {
             // { method_id: { [Op.like]: `%${searchQuery}%` } },
           ]
         }
-
         return Promise.resolve(await Order.findAndCountAll(clause))
       } catch (error) {
         return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
       }
     },
-    getOrderById: async (_, { id }, context) => {
+    getOrderById: async (_, { id }) => {
       return await Order.findOne({ where: { id } })
+    },
+    getOrderByIdAndStatus: async (_, { id, status_id, type_id }) => {
+      const clause: any = {
+        where: {
+          id,
+          is_active: true,
+        },
+      }
+      if (status_id) {
+        const ids = status_id.map((id) => {
+          return { status_id: id }
+        })
+        clause.where[Op.or] = ids
+      }
+
+      if (type_id) {
+        clause.where.type_id = type_id
+      }
+
+      const order = await Order.findOne(clause)
+      if (!order) return Promise.reject(Error(orderNotFound))
+      return order
     },
     getAllStatusesOrders: async (_, {}) => {
       const clause: any = {
@@ -73,6 +100,123 @@ const woocommerceResolver: Resolvers = {
           await Order.findAll({
             where: {
               status_id: 1,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllProcessExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 2,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllBillingExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 3,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllToStockExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 6,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllLocalExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 2 || 6 || 7 || 8,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllNationalExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 7 || 3 || 9 || 10 || 8,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllShippedExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 11,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllRejectedExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 12 || 13,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllInRouteExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 7,
+            },
+          })
+        )
+      } catch (error) {
+        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+      }
+    },
+    getAllCollectExport: async (_, {}) => {
+      try {
+        return Promise.resolve(
+          await Order.findAll({
+            where: {
+              status_id: 8,
             },
           })
         )
@@ -112,11 +256,72 @@ const woocommerceResolver: Resolvers = {
     shipping: async ({ shipping_id }) => {
       return await OrderShipping.findOne({ where: { id: shipping_id } })
     },
+
     payment: async ({ payment_id }) => {
       return await OrderPayment.findOne({ where: { id: payment_id } })
     },
     products: async ({ id }) => {
       return await OrderProduct.findAll({ where: { order_id: id } })
+    },
+    shippingCompany: async ({ shipping_company_id }) => {
+      return await ShippingCompanies.findOne({
+        where: { id: shipping_company_id },
+      })
+    },
+  },
+  Shipping: {
+    receipt: async ({ id_file_receipt }) => {
+      const file = await FileModel.findOne({
+        where: { id: id_file_receipt },
+      })
+      if (file) {
+        const url = await getFile(file.url)
+        return { id: file.id, url: url } as TypeFile
+      } else {
+        return null
+      }
+    },
+  },
+  OrderExport:{
+    platform_name: async ({ platform_id }) => {
+      const query = await Platform.findOne({ where: { id: platform_id } })
+      if(query) return query.name
+      else return null
+    },
+    type_name: async ({ type_id }) => {
+      const query = await OrderTypes.findOne({ where: { id: type_id } })
+      if(query) return query.name
+      else return null
+    },
+    platform: async ({ payment_id }) => {
+      const query = await OrderPayment.findOne({ where: { id: payment_id } })
+      if(query) return query.platform
+      else return null
+    },
+    id_payment: async ({ payment_id }) => {
+      const query = await OrderPayment.findOne({ where: { id: payment_id } })
+      if(query) return query.payment_id
+      else return null
+    },
+    shipping_first_name: async ({ shipping_id }) => {
+      const query = await OrderShipping.findOne({ where: { id: shipping_id } })
+      if(query) return query.first_name
+      else return null
+    },
+    shipping_last_name: async ({ shipping_id }) => {
+      const query = await OrderShipping.findOne({ where: { id: shipping_id } })
+      if(query) return query.last_name
+      else return null
+    },
+    store_name: async ({ store_id }) => {
+      const query = await Store.findOne({ where: { id: store_id } })
+      if(query) return query.name
+      else return null
+    },
+    warehouse_name: async ({ warehouse_id }) => {
+      const query = await Warehouse.findOne({ where: { id: warehouse_id } })
+      if(query) return query.name
+      else return null
     },
   },
   Reason: {

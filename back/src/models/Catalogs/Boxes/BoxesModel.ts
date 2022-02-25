@@ -4,6 +4,7 @@ import sequelize from '../../../db/connection'
 interface BoxesAttributes {
     id: number
     name: string
+    description: string
     size: string
     large: number
     height: number
@@ -23,6 +24,7 @@ class Boxes
 {
     public id!: number
     public name!:string
+    public description!:string
     public size!:string
     public large!:number
     public height!:number
@@ -41,6 +43,10 @@ Boxes.init(
         },
         name: {
             type: DataTypes.STRING(200),
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING(250),
             allowNull: false,
         },
         size: {

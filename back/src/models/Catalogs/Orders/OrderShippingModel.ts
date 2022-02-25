@@ -7,6 +7,7 @@ interface OrderShippingAttributes {
   first_name: string
   last_name: string
   company: string
+  id_file_receipt: number | null
   address_1: string
   address_2: string
   city: string
@@ -18,7 +19,7 @@ interface OrderShippingAttributes {
   is_active: boolean
 }
 interface OrderShippingCreationAttributes
-  extends Optional<OrderShippingAttributes, 'id'> {}
+  extends Optional<OrderShippingAttributes, 'id' | 'id_file_receipt'> {}
 
 class OrderShipping
   extends Model<OrderShippingAttributes, OrderShippingCreationAttributes>
@@ -29,6 +30,7 @@ class OrderShipping
   public first_name!: string
   public last_name!: string
   public company!: string
+  public id_file_receipt!: number
   public address_1!: string
   public address_2!: string
   public city!: string
@@ -63,6 +65,11 @@ OrderShipping.init(
     company: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    id_file_receipt: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
     },
     address_1: {
       type: DataTypes.STRING,

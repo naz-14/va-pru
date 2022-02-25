@@ -1,8 +1,0 @@
-type issusses {
-  id: Int!
-  name: String!
-}
-
-type Query {
-  getAllIssusses: [issusses]!
-}

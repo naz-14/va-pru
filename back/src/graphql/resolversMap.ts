@@ -34,6 +34,16 @@ import OrdersWarehouseResolver from './resolvers/App/Catalogs/OrdersWarehouse/Or
 import ReasonsResolver from './resolvers/Catalogs/Reasons/ReasonsResolver'
 import QuoteResolver from './resolvers/Catalogs/Quotes/QuotesResolver'
 import DocumentStatusResolver from './resolvers/Catalogs/Documents/DocumentStatusResolver'
+import SapListPricesItemsResolver from './resolvers/Catalogs/SAP/ListPricesItems/SapListPricesItemsResolver'
+import SapListPricesResolver from './resolvers/Catalogs/SAP/ListPrices/SapListPricesResolver'
+import SapItemsResolver from './resolvers/Catalogs/SAP/Items/SapItemsResolver'
+import SapBusinessPartnerResolver from './resolvers/Catalogs/SAP/BusinessPartner/BusinessPartnerResolver'
+import SapNumberGroupsResolver from './resolvers/Catalogs/SAP/NumberGroups/SapNumberGroupsResolver'
+import SapPartnerGroupResolver from './resolvers/Catalogs/SAP/PartnerGroup/SapPartnerGroupResolver'
+import SapPurchasesOrdersResolver from './resolvers/Catalogs/SAP/PurchasesOrders/SapPurchasesOrdersResolver'
+import SapPurchasesOrdersLinesResolver from './resolvers/Catalogs/SAP/PurchasesOrdersLine/SapPurchasesOrdersLinesResolver'
+import SapWarehousesResolver from './resolvers/Catalogs/SAP/Warehouses/SapWarehousesResolver'
+import BoxesResolver from './resolvers/Catalogs/Boxes/Boxes'
 
 const resolversMap: Resolvers = merge([
   UserResolver,
@@ -70,6 +80,16 @@ const resolversMap: Resolvers = merge([
   ReasonsResolver,
   QuoteResolver,
   DocumentStatusResolver,
+  SapListPricesItemsResolver,
+  SapListPricesResolver,
+  SapItemsResolver,
+  SapBusinessPartnerResolver,
+  SapNumberGroupsResolver,
+  SapPartnerGroupResolver,
+  SapPurchasesOrdersResolver,
+  SapPurchasesOrdersLinesResolver,
+  SapWarehousesResolver,
+  BoxesResolver,
 ])
 
 export default resolversMap

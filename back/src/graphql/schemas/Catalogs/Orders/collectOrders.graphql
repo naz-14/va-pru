@@ -1,4 +1,4 @@
-type Query{
+type Query {
   getCollectOrders(
     searchQuery: String
     limit: Int
@@ -8,5 +8,5 @@ type Query{
 }
 
 type Mutation {
-  changeToCollect(order_id: Int!, shipping_compay_id: Int): Order
+  changeToCollect(order_id: Int!, shipping_company_id: Int): Order
 }

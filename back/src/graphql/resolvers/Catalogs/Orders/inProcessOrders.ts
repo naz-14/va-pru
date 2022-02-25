@@ -5,6 +5,10 @@ import Order from '../../../../models/Catalogs/Orders/OrderModel'
 import Store from '../../../../models/Catalogs/Stores/StoreModel'
 import { Resolvers } from '../../../generated'
 
+const orderNotFound = 'No se encontro el pedido'
+const storeNotFound = 'No se encontro la tienda'
+const defaultError = 'Algo salio mal, vuelve a intentar'
+
 const inProcessOrdersResolver: Resolvers = {
   Query: {
     getInProcessOrders: async (
@@ -13,13 +17,13 @@ const inProcessOrdersResolver: Resolvers = {
       context
     ) => {
       const clause: any = {
-        where: {},
+        where: {
+          status_id: 2,
+        },
       }
 
-      if (context.roleId === 4) {
-        clause.where[Op.and] = [{ status_id: 2 }, { store_id: context.storeId }]
-      } else {
-        clause.where = { status_id: 2 }
+      if (context.storeId) {
+        clause.where.store_id = context.storeId
       }
 
       if (limit !== null && offset !== null) {
@@ -38,7 +42,8 @@ const inProcessOrdersResolver: Resolvers = {
         ]
       }
 
-      return await Order.findAndCountAll(clause)
+      const result = await Order.findAndCountAll(clause)
+      return result
     },
   },
   Mutation: {
@@ -53,7 +58,8 @@ const inProcessOrdersResolver: Resolvers = {
           },
         })
         if (!order) {
-          return Promise.reject(Error('No se encontro el pedido'))
+          await transaction.rollback()
+          return Promise.reject(Error(orderNotFound))
         }
         const store = await Store.findOne({
           where: {
@@ -61,26 +67,31 @@ const inProcessOrdersResolver: Resolvers = {
           },
         })
         if (!store) {
-          return Promise.reject(Error('No se encontro la tienda'))
+          await transaction.rollback()
+          return Promise.reject(Error(storeNotFound))
         }
 
         const timeLineCreate = await TimeLineAdd({
-          orderId: order_id,
-          userId,
+          orderId: order.order_id,
+          statusId: 2,
+          userId: userId,
           transaction,
         })
-        if (!timeLineCreate)
-          return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+        if (!timeLineCreate) return Promise.reject(Error(defaultError))
 
-        await order.update({
-          status_id: 2,
-          store_id,
-          user_id: userId,
-        })
+        await order.update(
+          {
+            status_id: 2,
+            store_id,
+            user_id: userId,
+          },
+          { transaction }
+        )
+        await transaction.commit()
         return order
       } catch (error) {
         await transaction.rollback()
-        return Promise.reject(Error('Algo salio mal, vuelve a intentar'))
+        return Promise.reject(Error(defaultError))
       }
     },
   },
