@@ -258,7 +258,7 @@ const OrdersWarehouseResolver = {
         validateRack: (_, { warehouseOrderId, rackCode }, context) => __awaiter(void 0, void 0, void 0, function* () {
             const transaction = yield connection_1.default.transaction();
             try {
-                const order = yield OrdersWarehouseModel_1.default.findOne({
+                let order = yield OrdersWarehouseModel_1.default.findOne({
                     where: { id: warehouseOrderId },
                 });
                 if (order) {
@@ -286,8 +286,8 @@ const OrdersWarehouseResolver = {
                         is_active: true,
                     }, { transaction });
                     yield transaction.commit();
-                    pubsub.publish('pickingOrderCompleted', {
-                        pickingOrderCompleted: order,
+                    yield pubsub.publish('pickingOrderCompleted', {
+                        pickingOrderCompleted: Object.assign(Object.assign({}, order), { rack_id: rackCode }),
                     });
                     return true;
                 }

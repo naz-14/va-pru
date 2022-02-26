@@ -1,4 +1,8 @@
-import { ProductsOrderWarehouse, Resolvers } from '../../../../generated'
+import {
+  AppOrderWarehouse,
+  ProductsOrderWarehouse,
+  Resolvers,
+} from '../../../../generated'
 import OrdersWarehouse from '../../../../../models/App/Catalogs/Orders/OrdersWarehouse/OrdersWarehouseModel'
 import Order from '../../../../../models/Catalogs/Orders/OrderModel'
 import { Op } from 'sequelize'
@@ -267,7 +271,7 @@ const OrdersWarehouseResolver: Resolvers = {
     validateRack: async (_, { warehouseOrderId, rackCode }, context) => {
       const transaction = await sequelize.transaction()
       try {
-        const order = await OrdersWarehouse.findOne({
+        let order = await OrdersWarehouse.findOne({
           where: { id: warehouseOrderId },
         })
         if (order) {
@@ -304,8 +308,8 @@ const OrdersWarehouseResolver: Resolvers = {
             { transaction }
           )
           await transaction.commit()
-          pubsub.publish('pickingOrderCompleted', {
-            pickingOrderCompleted: order,
+          await pubsub.publish('pickingOrderCompleted', {
+            pickingOrderCompleted: { ...order, rack_id: rackCode },
           })
           return true
         }
