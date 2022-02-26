@@ -143,6 +143,9 @@ const OrdersWarehouseResolver = {
                 where: {
                     picking_user_id: id,
                     open: false,
+                    packing_user_id: {
+                        [sequelize_1.Op.eq]: null,
+                    },
                 },
             });
         },

@@ -154,6 +154,9 @@ const OrdersWarehouseResolver: Resolvers = {
         where: {
           picking_user_id: id,
           open: false,
+          packing_user_id: {
+            [Op.eq]: null,
+          },
         },
       })
     },
