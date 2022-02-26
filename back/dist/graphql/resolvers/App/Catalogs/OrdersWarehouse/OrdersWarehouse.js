@@ -262,7 +262,7 @@ const OrdersWarehouseResolver = {
                     where: { id: warehouseOrderId },
                 });
                 if (order) {
-                    yield OrdersWarehouseModel_1.default.update({
+                    const orderUpdated = yield OrdersWarehouseModel_1.default.update({
                         open: true,
                         rack_id: rackCode,
                     }, { where: { id: warehouseOrderId }, transaction });
@@ -287,7 +287,7 @@ const OrdersWarehouseResolver = {
                     }, { transaction });
                     yield transaction.commit();
                     yield pubsub.publish('pickingOrderCompleted', {
-                        pickingOrderCompleted: Object.assign(Object.assign({}, order), { rack_id: rackCode }),
+                        pickingOrderCompleted: orderUpdated,
                     });
                     return true;
                 }
