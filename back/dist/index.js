@@ -27,7 +27,7 @@ const subscriptions_transport_ws_1 = require("subscriptions-transport-ws");
 const graphql_1 = require("graphql");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        connection_1.default.sync({ alter: true });
+        connection_1.default.sync({ alter: false });
     }
     catch (e) {
         console.log(e);

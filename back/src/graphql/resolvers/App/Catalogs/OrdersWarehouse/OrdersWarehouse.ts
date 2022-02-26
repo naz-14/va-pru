@@ -273,9 +273,10 @@ const OrdersWarehouseResolver: Resolvers = {
       try {
         let order = await OrdersWarehouse.findOne({
           where: { id: warehouseOrderId },
+          raw: true,
         })
         if (order) {
-          const orderUpdated = await OrdersWarehouse.update(
+          await OrdersWarehouse.update(
             {
               open: true,
               rack_id: rackCode,
@@ -308,6 +309,9 @@ const OrdersWarehouseResolver: Resolvers = {
             { transaction }
           )
           await transaction.commit()
+          const orderUpdated = await OrdersWarehouse.findOne({
+            where: { id: warehouseOrderId },
+          })
           await pubsub.publish('pickingOrderCompleted', {
             pickingOrderCompleted: orderUpdated,
           })

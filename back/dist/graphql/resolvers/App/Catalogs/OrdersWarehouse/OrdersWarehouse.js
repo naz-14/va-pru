@@ -260,9 +260,10 @@ const OrdersWarehouseResolver = {
             try {
                 let order = yield OrdersWarehouseModel_1.default.findOne({
                     where: { id: warehouseOrderId },
+                    raw: true,
                 });
                 if (order) {
-                    const orderUpdated = yield OrdersWarehouseModel_1.default.update({
+                    yield OrdersWarehouseModel_1.default.update({
                         open: true,
                         rack_id: rackCode,
                     }, { where: { id: warehouseOrderId }, transaction });
@@ -286,6 +287,9 @@ const OrdersWarehouseResolver = {
                         is_active: true,
                     }, { transaction });
                     yield transaction.commit();
+                    const orderUpdated = yield OrdersWarehouseModel_1.default.findOne({
+                        where: { id: warehouseOrderId },
+                    });
                     yield pubsub.publish('pickingOrderCompleted', {
                         pickingOrderCompleted: orderUpdated,
                     });
