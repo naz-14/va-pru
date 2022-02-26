@@ -18,7 +18,7 @@ import { PubSub } from 'graphql-subscriptions'
 
 ;(async () => {
   try {
-    sequelize.sync({ alter: false })
+    sequelize.sync({ alter: true })
   } catch (e) {
     console.log(e)
   }

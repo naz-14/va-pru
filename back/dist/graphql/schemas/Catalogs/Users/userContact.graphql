@@ -1,0 +1,19 @@
+type userContacts {
+  id: Int
+  id_user: Int
+  id_contact: Int
+  contact_data: contactsCatalog
+  id_user_register: Int
+  id_user_update: Int
+  id_user_delete: Int
+  is_active: Boolean
+}
+
+input userContactInput {
+  id_user: Int
+  id_contact: Int
+  id_user_register: Int
+  id_user_update: Int
+  id_user_delete: Int
+  is_active: Boolean
+}

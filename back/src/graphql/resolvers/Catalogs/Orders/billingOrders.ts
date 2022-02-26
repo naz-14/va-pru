@@ -6,6 +6,8 @@ import ShippingOrders from '../../../../models/Catalogs/Orders/OrderShippingMode
 import { TimeLineAdd } from '../../../../helpers/TimeLineAdd'
 import sequelize from '../../../../db/connection'
 import { UploadDocument } from '../../../../helpers/UploadFile'
+import SulogReceiver from '../../../../helpers/SulogReceiver'
+import OrderInvoice from '../../../../models/Catalogs/Orders/OrderInvoiceModel'
 
 const orderNotFound = 'No se encontro el pedido'
 const logisticNotFound = 'No se encontro el empresa de logística'
@@ -114,6 +116,72 @@ const billingOrdersResolver: Resolvers = {
       } catch (error) {
         await transaction.rollback()
         return Promise.reject(Error(defaultError))
+      }
+    },
+    billingProcess: async (_, { order_id }, context) => {
+      const PrincipalOrder = await Order.findOne({
+        where: { id: order_id },
+      })
+      const resp = await SulogReceiver([
+        {
+          key: `${order_id}`,
+          name: 'createOrder',
+          values: { order_id },
+        },
+      ])
+      const data = resp[0].result
+      if (data.statusCode === 200) {
+        const transaction = await sequelize.transaction()
+        try {
+          const invoice = await OrderInvoice.create(
+            {
+              order_id,
+              invoice_doc_num: data.invoiceDocNum,
+              num_at_card: data.numAtCard,
+              invoice_url: 'https://www.google.com',
+              is_active: true,
+            },
+            { transaction }
+          )
+          await Order.update(
+            {
+              order_doc_num: data.orderDocNum,
+              num_at_card: data.numAtCard,
+              user_id: context.userId,
+              invoice_id: invoice.id,
+            },
+            { where: { id: order_id }, transaction }
+          )
+          await transaction.commit()
+          return true
+        } catch (e) {
+          await transaction.rollback()
+          return false
+        }
+      }
+      const transaction = await sequelize.transaction()
+      try {
+        const invoice = await OrderInvoice.create(
+          {
+            order_id,
+            is_active: true,
+          },
+          { transaction }
+        )
+        await Order.update(
+          {
+            order_doc_num: data.orderDocNum,
+            num_at_card: data.numAtCard,
+            user_id: context.userId,
+            invoice_id: invoice.id,
+          },
+          { where: { order_id }, transaction }
+        )
+        await transaction.commit()
+        return true
+      } catch (e) {
+        await transaction.rollback()
+        return false
       }
     },
   },

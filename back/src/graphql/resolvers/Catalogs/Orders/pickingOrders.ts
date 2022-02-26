@@ -3,11 +3,20 @@ import Order from '../../../../models/Catalogs/Orders/OrderModel'
 import { TimeLineAdd } from '../../../../helpers/TimeLineAdd'
 import sequelize from '../../../../db/connection'
 import OrdersWarehouse from '../../../../models/App/Catalogs/Orders/OrdersWarehouse/OrdersWarehouseModel'
+import { PubSub } from 'graphql-subscriptions'
 
+const pubsub = new PubSub()
 const orderNotFound = 'No se encontro el pedido'
 const defaultError = 'Algo salio mal, vuelve a intentar'
 
 const PickingOrdersResolver: Resolvers = {
+  Subscription: {
+    pickingOrderCreated: {
+      subscribe: async (parent, args) => {
+        return pubsub.asyncIterator('pickingOrderCreated')
+      },
+    },
+  },
   Query: {
     getPickingOrders: async (_, {}) => {
       return await Order.findAndCountAll({ where: { status_id: 9 } })
@@ -46,7 +55,7 @@ const PickingOrdersResolver: Resolvers = {
           { transaction }
         )
 
-        await OrdersWarehouse.create(
+        const warehouseOrder = await OrdersWarehouse.create(
           {
             order_id: order.id,
             open: true,
@@ -55,7 +64,13 @@ const PickingOrdersResolver: Resolvers = {
           { transaction }
         )
         await transaction.commit()
-        return order
+        await pubsub.publish('pickingOrderCreated', {
+          pickingOrderCreated: warehouseOrder,
+        })
+        return {
+          order,
+          warehouseOrder,
+        }
       } catch (error) {
         console.log(error)
         await transaction.rollback()

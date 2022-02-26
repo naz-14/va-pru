@@ -14,12 +14,14 @@ interface OrderAttributes {
   method_id: number
   shipping_id: number
   payment_id: number
-  innvoice_id: number
+  invoice_id: number
   shipping_company_id: number
   uber_id: string | null
   product_quantity: number
   shipping_price: number
   total_price: number
+  order_doc_num: number
+  num_at_card: string
   is_active: boolean
 }
 
@@ -30,12 +32,14 @@ interface OrderCreationAttributes
     | 'user_id'
     | 'shipping_id'
     | 'payment_id'
-    | 'innvoice_id'
+    | 'invoice_id'
     | 'product_quantity'
     | 'warehouse_id'
     | 'store_id'
     | 'uber_id'
     | 'shipping_company_id'
+    | 'order_doc_num'
+    | 'num_at_card'
   > {}
 
 class Order
@@ -54,12 +58,14 @@ class Order
   public method_id!: number
   public shipping_id!: number
   public payment_id!: number
-  public innvoice_id!: number
+  public invoice_id!: number
   public shipping_company_id!: number
   public uber_id!: string
   public product_quantity!: number
   public total_price!: number
   public shipping_price!: number
+  public order_doc_num!: number
+  public num_at_card!: string
   public is_active!: boolean
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -119,7 +125,7 @@ Order.init(
       allowNull: true,
       defaultValue: null,
     },
-    innvoice_id: {
+    invoice_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       defaultValue: null,
@@ -142,6 +148,14 @@ Order.init(
     total_price: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+    },
+    order_doc_num: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+    },
+    num_at_card: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     shipping_price: {
       type: DataTypes.INTEGER.UNSIGNED,

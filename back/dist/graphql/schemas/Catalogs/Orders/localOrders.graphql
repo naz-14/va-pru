@@ -1,0 +1,8 @@
+type Query {
+  getLocalOrders(
+    searchQuery: String
+    limit: Int
+    offset: Int
+    platform: Int
+  ): OrderRowsCount
+}

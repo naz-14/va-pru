@@ -134,6 +134,7 @@ export type Mutation = {
   authAppUser?: Maybe<Scalars['String']>;
   authUser: UserAuth;
   avatarUpdate: Scalars['Boolean'];
+  billingProcess: Scalars['Boolean'];
   changeMultipleOrdersToClose: Scalars['Boolean'];
   changeOrderPackingToClose: Scalars['Boolean'];
   changeOrderPackingToCompleted: Scalars['Boolean'];
@@ -142,7 +143,7 @@ export type Mutation = {
   changeToCollect?: Maybe<Order>;
   changeToInRoute?: Maybe<Order>;
   changeToPacking?: Maybe<Order>;
-  changeToPicking?: Maybe<Order>;
+  changeToPicking?: Maybe<NewPickingResponse>;
   changeToProcess?: Maybe<Order>;
   changeToRejected?: Maybe<Order>;
   changeToReturned?: Maybe<Order>;
@@ -217,6 +218,11 @@ export type MutationAuthUserArgs = {
 export type MutationAvatarUpdateArgs = {
   avatar: Scalars['Upload'];
   id_user: Scalars['Int'];
+};
+
+
+export type MutationBillingProcessArgs = {
+  order_id: Scalars['Int'];
 };
 
 
@@ -539,7 +545,9 @@ export type Order = {
   innvoice_id?: Maybe<Scalars['Int']>;
   method?: Maybe<Method>;
   method_id: Scalars['Int'];
+  num_at_card?: Maybe<Scalars['String']>;
   order_date?: Maybe<Scalars['String']>;
+  order_doc_num?: Maybe<Scalars['Int']>;
   order_id: Scalars['Int'];
   payment?: Maybe<Payment>;
   payment_id: Scalars['Int'];
@@ -1245,6 +1253,7 @@ export type Subscription = {
   packingOrderCompleted?: Maybe<AppOrderWarehouse>;
   pickingOrderChanged?: Maybe<AppOrderWarehouse>;
   pickingOrderCompleted?: Maybe<AppOrderWarehouse>;
+  pickingOrderCreated?: Maybe<AppOrderWarehouse>;
 };
 
 export type Timeline = {
@@ -1551,6 +1560,12 @@ export type MunicipalitiesCatalogSepomex = {
   id?: Maybe<Scalars['Int']>;
   id_city: Scalars['Int'];
   name: Scalars['String'];
+};
+
+export type NewPickingResponse = {
+  __typename?: 'newPickingResponse';
+  order?: Maybe<Order>;
+  warehouseOrder?: Maybe<AppOrderWarehouse>;
 };
 
 export type PasswordRecoveryInput = {
@@ -1955,6 +1970,7 @@ export type ResolversTypes = {
   moduleInput: ModuleInput;
   municipalitiesCatalog: ResolverTypeWrapper<MunicipalitiesCatalog>;
   municipalitiesCatalogSepomex: ResolverTypeWrapper<MunicipalitiesCatalogSepomex>;
+  newPickingResponse: ResolverTypeWrapper<NewPickingResponse>;
   passwordRecoveryInput: PasswordRecoveryInput;
   passwordUpdateInput: PasswordUpdateInput;
   platformCatalog: ResolverTypeWrapper<PlatformCatalog>;
@@ -2076,6 +2092,7 @@ export type ResolversParentTypes = {
   moduleInput: ModuleInput;
   municipalitiesCatalog: MunicipalitiesCatalog;
   municipalitiesCatalogSepomex: MunicipalitiesCatalogSepomex;
+  newPickingResponse: NewPickingResponse;
   passwordRecoveryInput: PasswordRecoveryInput;
   passwordUpdateInput: PasswordUpdateInput;
   platformCatalog: PlatformCatalog;
@@ -2204,6 +2221,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   authAppUser?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationAuthAppUserArgs, 'password' | 'username'>>;
   authUser?: Resolver<ResolversTypes['userAuth'], ParentType, ContextType, RequireFields<MutationAuthUserArgs, 'input'>>;
   avatarUpdate?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationAvatarUpdateArgs, 'avatar' | 'id_user'>>;
+  billingProcess?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationBillingProcessArgs, 'order_id'>>;
   changeMultipleOrdersToClose?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeMultipleOrdersToCloseArgs, 'ids'>>;
   changeOrderPackingToClose?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeOrderPackingToCloseArgs, 'id'>>;
   changeOrderPackingToCompleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeOrderPackingToCompletedArgs, 'id'>>;
@@ -2212,7 +2230,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   changeToCollect?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToCollectArgs, 'order_id'>>;
   changeToInRoute?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToInRouteArgs, 'order_id'>>;
   changeToPacking?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToPackingArgs, 'order_id' | 'rack_code'>>;
-  changeToPicking?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToPickingArgs, 'order_id'>>;
+  changeToPicking?: Resolver<Maybe<ResolversTypes['newPickingResponse']>, ParentType, ContextType, RequireFields<MutationChangeToPickingArgs, 'order_id'>>;
   changeToProcess?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToProcessArgs, 'order_id' | 'store_id'>>;
   changeToRejected?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToRejectedArgs, 'id_reason' | 'order_id'>>;
   changeToReturned?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationChangeToReturnedArgs, 'order_id'>>;
@@ -2293,7 +2311,9 @@ export type OrderResolvers<ContextType = any, ParentType extends ResolversParent
   innvoice_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   method?: Resolver<Maybe<ResolversTypes['Method']>, ParentType, ContextType>;
   method_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  num_at_card?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order_date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  order_doc_num?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   order_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   payment?: Resolver<Maybe<ResolversTypes['Payment']>, ParentType, ContextType>;
   payment_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2705,6 +2725,7 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   packingOrderCompleted?: SubscriptionResolver<Maybe<ResolversTypes['AppOrderWarehouse']>, "packingOrderCompleted", ParentType, ContextType>;
   pickingOrderChanged?: SubscriptionResolver<Maybe<ResolversTypes['AppOrderWarehouse']>, "pickingOrderChanged", ParentType, ContextType>;
   pickingOrderCompleted?: SubscriptionResolver<Maybe<ResolversTypes['AppOrderWarehouse']>, "pickingOrderCompleted", ParentType, ContextType>;
+  pickingOrderCreated?: SubscriptionResolver<Maybe<ResolversTypes['AppOrderWarehouse']>, "pickingOrderCreated", ParentType, ContextType>;
 };
 
 export type TimelineResolvers<ContextType = any, ParentType extends ResolversParentTypes['Timeline'] = ResolversParentTypes['Timeline']> = {
@@ -2966,6 +2987,12 @@ export type MunicipalitiesCatalogSepomexResolvers<ContextType = any, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type NewPickingResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['newPickingResponse'] = ResolversParentTypes['newPickingResponse']> = {
+  order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
+  warehouseOrder?: Resolver<Maybe<ResolversTypes['AppOrderWarehouse']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PlatformCatalogResolvers<ContextType = any, ParentType extends ResolversParentTypes['platformCatalog'] = ResolversParentTypes['platformCatalog']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3203,6 +3230,7 @@ export type Resolvers<ContextType = any> = {
   moduleInfo?: ModuleInfoResolvers<ContextType>;
   municipalitiesCatalog?: MunicipalitiesCatalogResolvers<ContextType>;
   municipalitiesCatalogSepomex?: MunicipalitiesCatalogSepomexResolvers<ContextType>;
+  newPickingResponse?: NewPickingResponseResolvers<ContextType>;
   platformCatalog?: PlatformCatalogResolvers<ContextType>;
   quotesData?: QuotesDataResolvers<ContextType>;
   reasonsData?: ReasonsDataResolvers<ContextType>;

@@ -4,13 +4,11 @@ require('dotenv').config()
 //EXAMPLE
 //[
 // {
-//    order_id: 49844,
 //    key: '49844',
 //    name: 'createOrder',
 //    values: { order_id: 49844 },
 // },
 // {
-//    order_id: 49829,
 //    key: '49829',
 //    name: 'createOrder',
 //    values: { order_id: 49829 },
@@ -29,7 +27,7 @@ export const SulogReceiver = async (data: any) => {
       data: data,
     })
     return request.data
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(Error(documentWasNotCreated))
   }
 }

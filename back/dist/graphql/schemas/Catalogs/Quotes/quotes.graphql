@@ -1,0 +1,69 @@
+input quoteData{
+  cardCode: String!
+  cardName: String!
+  docDate: String!
+  docTime: String!
+  docStatus: Int!
+  comments: String
+  whsCode: String!
+}
+
+type quotesData{
+  id: Int!
+  cardCode: String!
+  cardName: String!
+  docDate: String!
+  docTime: String!
+  docStatus: Int!
+  comments: String
+  whsCode: String!
+  status: Status
+}
+
+#RES OF SAP
+type Provider{
+    name: String,
+    key: String,
+    result: ProviderResult,
+}
+type ProviderResult{
+    statusCode: Int,
+    businessPartner: BusinessPartner,
+    openOrders: [OpenOrders]
+}
+type BusinessPartner{
+    cardCode: String,
+    cardName: String,
+    cardType: String,
+    address: String,
+    zipCode: String,
+    mailAdress: String,
+}
+type OpenOrders{
+    transId: Int,
+    docEntry: Int,
+    cardCode: String,
+    cardName: String,
+    objType: String,
+    docNum: Int,
+    docDate: String,
+    series: Int,
+    docStatus: String,
+    comments: String,
+    numAtCard: Int,
+    docTotal: Int,
+}
+
+input providerData {
+  cardCode: String
+  cardName: String
+}
+
+type Mutation {
+  createQuote(inputQuote: quoteData!): Boolean
+  getInfoProvider(inputProvider: providerData!): Boolean
+}
+
+type Query {
+  getQuotes: [quotesData!]!
+}
