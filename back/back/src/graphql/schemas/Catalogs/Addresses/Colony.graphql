@@ -1,0 +1,7 @@
+type coloniesCatalog {
+  id: Int!
+  name: String!
+  id_municipality: Int!
+  zip_code: Int!
+  active: Boolean
+}

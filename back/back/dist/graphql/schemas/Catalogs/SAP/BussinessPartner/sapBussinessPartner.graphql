@@ -1,0 +1,26 @@
+type SapBusinessPartner {
+    id: Int!
+    card_code: String
+    card_name: String
+    card_type: String
+    group_code: Int
+    partner_group: SapPartnerGroup
+    list_number: Int
+    list: SapListPrices
+    group_number: Int
+    group: SapNumberGroups
+    credit_line: Int
+    debit_line: Int
+    discount: Int
+    phone1: String
+    phone2: String
+    email: String
+    lic_trad_number: String
+}
+
+type Query {
+    getSapBusinessPartner(
+        limit: Int
+        offset: Int
+    ): [SapBusinessPartner!]!
+}

@@ -1,0 +1,92 @@
+type Query {
+  Users(searchQuery: String, limit: Int, offset: Int): UserRowsCount
+  GetUserById(id: Int!): User
+}
+
+type UserRowsCount {
+  rows: [User]
+  count: Int
+}
+
+type Mutation {
+  getAllUsersExport: [User]
+  getUser(userID: Int!): User!
+  registerUser(
+    input: userRegisterInput!
+    inputAvatar: Upload!
+    inputAddress: addressInput!
+    inputContact: [contactInput!]!
+  ): userData!
+
+  updateUser(
+    userID: Int!
+    input: userRegisterInput!
+    inputAvatar: Upload
+    addressId: Int!
+    inputAddress: addressInput!
+    inputContact: [contactInput!]!
+  ): Boolean!
+
+  deleteUser(id: Int!, userId: Int!): Boolean!
+
+  passwordUpdate(
+    id_user: Int!
+    currentPassword: String!
+    password: String!
+  ): Boolean!
+
+  avatarUpdate(id_user: Int!, avatar: Upload!): Boolean!
+}
+
+type User {
+  id: Int!
+  name: String!
+  first_name: String!
+  last_name: String
+  user_name: String!
+  email: String!
+  id_address: Int!
+  password: String!
+  id_avatar_file: Int!
+  avatar: typeAvatar
+  id_role: Int!
+  id_store: Int
+  id_user_register: Int
+  id_user_update: Int
+  id_user_delete: Int
+  address: addressesCatalog
+  contacts: [userContacts!]
+}
+
+input passwordUpdateInput {
+  id_user: Int!
+  currentPassword: String!
+  password: String!
+}
+
+input userRegisterInput {
+  name: String!
+  first_name: String!
+  last_name: String!
+  user_name: String!
+  email: String!
+  password: String!
+  id_address: Int
+  id_store: Int
+  id_role: Int!
+  id_user_register: Int
+  id_user_update: Int
+  id_user_delete: Int
+  active: Boolean!
+}
+
+type userData {
+  id: Int!
+  user_name: String!
+  id_role: Int!
+}
+
+type typeAvatar {
+  id: Int!
+  url: String!
+}

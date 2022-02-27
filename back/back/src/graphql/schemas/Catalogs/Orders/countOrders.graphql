@@ -1,0 +1,16 @@
+type counters {
+  pendings: Int!
+  processing: Int!
+  billing: Int!
+  toSupply: Int!
+  collect: Int!
+  route: Int!
+  localShipping: Int!
+  nationalShipping: Int!
+  complete: Int!
+  rejected: Int!
+}
+
+type Query {
+  getAllCounters: counters!
+}

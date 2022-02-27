@@ -1,0 +1,32 @@
+type InternalNotes {
+  id: Int!
+  order_id: Int!
+  user_id: Int!
+  text: String
+  file_id: Int
+  type: String
+  createdAt: String!
+  user: UserDetails
+  fileInternal: typeFile
+}
+
+type typeFile {
+  id: Int
+  url: String
+}
+
+input internalNote {
+  user_id: Int!
+  order_id: Int!
+  text: String
+  file: Upload
+  type: String
+}
+
+type Query {
+  getInternalNotes(orderId: Int!): [InternalNotes!]!
+}
+
+type Mutation {
+  createInternalNote(inputInternalNote: internalNote!): Boolean
+}

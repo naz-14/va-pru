@@ -1,0 +1,75 @@
+type AppOrderWarehouse {
+    id: Int!
+    order_id: Int!
+    order: Order
+    rack_id: Int
+    picking_user_id: Int
+    packing_user_id: Int
+    open: Boolean!
+}
+
+type ProductsOrderWarehouse {
+    id: Int!
+    product_id: Int!
+    sku: String!
+    name: String!
+    quantity: Int!
+    price: Float!
+    total: Float!
+    variation_id: Int
+    rack: String!
+    picked: Boolean
+    packed: Boolean
+}
+
+type OrderDetails {
+    details: AppOrderWarehouse
+    products: [ProductsOrderWarehouse]
+}
+
+type MultiOrderDetails {
+    details: [AppOrderWarehouse]
+    products: [ProductsOrderWarehouse]
+}
+
+input boxInput {
+    box_id: Int!
+    quantity: Int!
+}
+
+type box {
+    id: Int!
+    box_id: Int!
+    quantity: Int!
+}
+
+type Query {
+    getAllAppOrderWarehouses: [AppOrderWarehouse]
+    getAllAppOrderWarehousesPacking: [AppOrderWarehouse]
+    getAppOrderWarehouseById(id: Int!): OrderDetails
+    getAppOderWarehouseByMultiIds(ids: [Int!]!): MultiOrderDetails
+    getAppWarehouseOrderBoxes(id: Int!): [box]
+    getAppUserWarehouseOrders(id: Int!): [AppOrderWarehouse]
+    getAppUserWarehouseOrdersPacking: [AppOrderWarehouse]
+}
+
+type Mutation {
+    isOrderOpen(id: Int!): Boolean!
+    changeOrderToClose(id: Int!): Boolean!
+    changeOrderPackingToClose(id: Int!): Boolean!
+    changeOrderPackingToCompleted(id: Int!): Boolean!
+    changeMultipleOrdersToClose(ids: [Int!]!): Boolean!
+    validateProduct(productSku: Int!, productBarcode: String!, orderProductId: Int!): Boolean!
+    validateProductPacking(productSku: Int!, productBarcode: String!, orderProductId: Int!): Boolean!
+    validateRack(rackCode: Int!, warehouseOrderId: Int!): Boolean!
+    validateRackMultiOrder(rackCode: Int!, warehouseOrderId: [Int!]!): Boolean!
+    createOrderWarehouseBoxes(orderId: Int!,boxes: [boxInput!]!): Boolean!
+}
+
+type Subscription {
+    pickingOrderCreated: AppOrderWarehouse
+    pickingOrderChanged: AppOrderWarehouse
+    pickingOrderCompleted: AppOrderWarehouse
+    packingOrderChanged: AppOrderWarehouse
+    packingOrderCompleted: AppOrderWarehouse
+}

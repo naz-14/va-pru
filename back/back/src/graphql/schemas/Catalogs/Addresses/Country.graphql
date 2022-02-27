@@ -1,0 +1,5 @@
+type countriesCatalog {
+  id: Int
+  name: String!
+  active: Boolean
+}

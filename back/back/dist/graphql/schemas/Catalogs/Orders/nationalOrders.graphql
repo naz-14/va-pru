@@ -1,0 +1,8 @@
+type Query{
+    getNationalOrders(
+        searchQuery: String
+        limit: Int
+        offset: Int
+        platform: Int
+    ): OrderRowsCount
+}

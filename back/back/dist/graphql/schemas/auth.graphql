@@ -1,0 +1,37 @@
+type Mutation {
+  decryptToken(token: String!): tokenDecrypted!
+  decryptTokenApp(token: String!): tokenDecryptedApp!
+  authUser(input: userLoginInput!): userAuth!
+}
+
+input userLoginInput {
+  userName: String!
+  password: String!
+}
+
+type userAuth {
+  token: String!
+}
+
+type tokenDecrypted {
+  id: Int!
+  user_name: String!
+  first_name: String!
+  last_name: String!
+  role: Int!
+  email: String!
+  name: String!
+  avatar: String!
+  iat: Int!
+  exp: Int!
+}
+
+type tokenDecryptedApp {
+  id: Int!
+  username: String!
+  name: String!
+  email: String!
+  id_type: Int!
+  iat: Int!
+  exp: Int!
+}

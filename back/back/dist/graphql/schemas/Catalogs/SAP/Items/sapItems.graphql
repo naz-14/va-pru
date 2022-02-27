@@ -1,0 +1,27 @@
+type SapItems {
+    id: Int!
+    item_code: String
+    item_name: String
+    item_group_code: Int
+    item_code_bar: String
+    purchase_pack_msr: String
+    purchase_pack_un: Int
+    sal_pack_msr: String
+    sal_pack_un: Int
+    indirect_tax: String
+    card_code: String
+    tax_code_ar: String
+    tax_code_ap: String
+    inventory_item: String
+    sell_item: String
+    purchase_item: String
+    business_partner_id: Int
+    business_partner: SapBusinessPartner
+}
+
+type Query {
+    getSapItems(
+        limit: Int
+        offset: Int
+    ): [SapItems!]!
+}
