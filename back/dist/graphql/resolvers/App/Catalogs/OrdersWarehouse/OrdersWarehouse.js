@@ -35,6 +35,11 @@ const OrdersWarehouseResolver = {
                 return pubsub.asyncIterator('pickingOrderCompleted');
             },
         },
+        pickingOrderUncompleted: {
+            subscribe: (_, __) => {
+                return pubsub.asyncIterator('pickingOrderUncompleted');
+            },
+        },
         packingOrderChanged: {
             subscribe: (_, __) => {
                 return pubsub.asyncIterator('packingOrderChanged');
@@ -76,13 +81,15 @@ const OrdersWarehouseResolver = {
         getAppOrderWarehouseById: (_, { id }, context) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const order = yield OrdersWarehouseModel_1.default.findOne({ where: { id } });
+                console.log('AAAAAAAAAAAAa');
                 if (!order) {
                     throw new Error('Order not found');
                 }
                 const products = yield OrderProductModel_1.default.findAll({
-                    where: { order_id: order.id },
+                    where: { order_id: order.order_id },
                     raw: true,
                 });
+                console.log(products);
                 const productArray = [];
                 // forEach product shuild get the rack and append it to the product
                 products.forEach((product) => {
@@ -150,6 +157,7 @@ const OrdersWarehouseResolver = {
             });
         },
         getAppUserWarehouseOrdersPacking(_, {}, context) {
+            console.log(context);
             return OrdersWarehouseModel_1.default.findAll({
                 where: {
                     packing_user_id: context.userId,
@@ -258,6 +266,38 @@ const OrdersWarehouseResolver = {
                 return false;
             }
         }),
+        unavailableProduct: (_, { orderProductId }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const orderProduct = yield OrderProductModel_1.default.findOne({
+                    where: { id: orderProductId },
+                });
+                if (orderProduct) {
+                    orderProduct.unavailable = true;
+                    yield orderProduct.save();
+                    return true;
+                }
+                return false;
+            }
+            catch (e) {
+                return false;
+            }
+        }),
+        changeOrderToUncompleted: (_, { id }) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const order = yield OrdersWarehouseModel_1.default.findOne({
+                    where: { id },
+                });
+                if (order) {
+                    order.uncompleted = true;
+                    yield order.save();
+                    return true;
+                }
+                return false;
+            }
+            catch (e) {
+                return false;
+            }
+        }),
         validateRack: (_, { warehouseOrderId, rackCode }, context) => __awaiter(void 0, void 0, void 0, function* () {
             const transaction = yield connection_1.default.transaction();
             try {
@@ -295,6 +335,29 @@ const OrdersWarehouseResolver = {
                     });
                     yield pubsub.publish('pickingOrderCompleted', {
                         pickingOrderCompleted: orderUpdated,
+                    });
+                    return true;
+                }
+                return false;
+            }
+            catch (e) {
+                return false;
+            }
+        }),
+        validateRackUncompleted: (_, { rackCode, warehouseOrderId }) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                let order = yield OrdersWarehouseModel_1.default.findOne({
+                    where: { id: warehouseOrderId },
+                    raw: true,
+                });
+                if (order) {
+                    yield OrdersWarehouseModel_1.default.update({
+                        open: true,
+                        rack_id: rackCode,
+                        picking_user_id: null,
+                    }, { where: { id: warehouseOrderId } });
+                    yield pubsub.publish('pickingOrderUncompleted', {
+                        pickingOrderUncompleted: order,
                     });
                     return true;
                 }

@@ -1,8 +1,0 @@
-type DocumentsStatuses{
-  id: Int!
-  name: String!
-}
-
-type Query{
-    getDocumentsStatuses:[DocumentsStatuses!]!
-}

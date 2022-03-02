@@ -50,7 +50,17 @@ OrderProduct.init({
         allowNull: true,
         defaultValue: false,
     },
+    partial_picked: {
+        type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
+        allowNull: true,
+        defaultValue: null,
+    },
     packed: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+    },
+    unavailable: {
         type: sequelize_1.DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue: false,

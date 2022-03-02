@@ -1,0 +1,8 @@
+type Dock{
+    id: Int!
+    name: String
+}
+
+type Query{
+    getDocks:[Dock]!
+}

@@ -53,11 +53,11 @@ SapListPricesItems.init(
         allowNull: true,
     },
     price: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DOUBLE,
         allowNull: true,
     },
     factor: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DOUBLE,
         allowNull: true,
     },
     base_num: {

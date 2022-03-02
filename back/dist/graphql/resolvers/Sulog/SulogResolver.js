@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = __importDefault(require("../../../db/connection"));
-const SulogReceiver_1 = __importDefault(require("../../../helpers/SulogReceiver"));
+const ApiSapReceiver_1 = __importDefault(require("../../../helpers/ApiSapReceiver"));
 const documentNotFound = 'El numero de documento no existe';
 const documentWasNotCreated = 'No se puedo crear el documento';
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos';
@@ -40,7 +40,7 @@ const SulogResolver = {
                         },
                     };
                 });
-                const sulogCreate = yield (0, SulogReceiver_1.default)(data);
+                const sulogCreate = yield (0, ApiSapReceiver_1.default)(data);
                 if (!sulogCreate) {
                     yield transaction.rollback();
                     return Promise.reject(Error(documentWasNotCreated));

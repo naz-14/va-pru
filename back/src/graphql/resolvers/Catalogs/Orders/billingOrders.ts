@@ -6,7 +6,7 @@ import ShippingOrders from '../../../../models/Catalogs/Orders/OrderShippingMode
 import { TimeLineAdd } from '../../../../helpers/TimeLineAdd'
 import sequelize from '../../../../db/connection'
 import { UploadDocument } from '../../../../helpers/UploadFile'
-import SulogReceiver from '../../../../helpers/SulogReceiver'
+import SulogReceiver from '../../../../helpers/ApiSapReceiver'
 import OrderInvoice from '../../../../models/Catalogs/Orders/OrderInvoiceModel'
 
 const orderNotFound = 'No se encontro el pedido'

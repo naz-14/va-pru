@@ -8,13 +8,14 @@ interface OrdersWarehouseAttributes {
   picking_user_id: number | null
   packing_user_id: number | null
   open: Boolean
+  uncompleted: Boolean
   is_active: Boolean
 }
 
 interface OrdersWarehouseCreationAttributes
   extends Optional<
     OrdersWarehouseAttributes,
-    'id' | 'rack_id' | 'picking_user_id' | 'packing_user_id'
+    'id' | 'rack_id' | 'picking_user_id' | 'packing_user_id' | 'uncompleted'
   > {}
 
 class OrdersWarehouse
@@ -27,6 +28,7 @@ class OrdersWarehouse
   public picking_user_id!: number
   public packing_user_id!: number
   public open!: boolean
+  public uncompleted!: boolean
   public is_active!: boolean
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -58,6 +60,11 @@ OrdersWarehouse.init(
     open: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+    },
+    uncompleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     is_active: {
       type: DataTypes.BOOLEAN,

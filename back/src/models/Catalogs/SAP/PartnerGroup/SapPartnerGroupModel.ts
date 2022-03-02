@@ -48,6 +48,7 @@ SapPartnerGroup.init(
     group_name: {
       type: DataTypes.STRING(20),
       allowNull: true,
+      defaultValue: null,
     },
     group_type: {
       type: DataTypes.CHAR(1),

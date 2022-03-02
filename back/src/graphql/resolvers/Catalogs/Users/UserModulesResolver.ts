@@ -2,6 +2,7 @@ import { Resolvers } from '../../../generated'
 import UserModulesModel from '../../../../models/Users/UserModulesModel'
 import ModuleModel from '../../../../models/Catalogs/Modules/ModuleModel'
 import SubmoduleModel from '../../../../models/Catalogs/Modules/SubmoduleModel'
+import sequelize from '../../../../db/connection'
 
 const userPermissionsNotFound = 'No se encontrarón permisos para el usuario'
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos'
@@ -19,9 +20,11 @@ const UserModulesResolver: Resolvers = {
       }
     },
     updateUserPermission: async (_, { userID, modules }) => {
+      const transaction = await sequelize.transaction() //START TRANSACTION
       try {
         const userModulesFound = await UserModulesModel.findAll({
           where: { id_user: userID, is_active: true },
+          transaction,
         })
         if (!userModulesFound)
           return Promise.reject(Error(userPermissionsNotFound))
@@ -34,33 +37,41 @@ const UserModulesResolver: Resolvers = {
           where: { name: 'UserProfileMain' },
         })
         if (existsProfileModule) {
-          await UserModulesModel.create({
-            id_user: userID,
-            id_module: existsProfileModule.id,
-            id_submodule: null,
-            access_retrieve: true,
-            access_read: true,
-            access_edit: true,
-            access_delete: true,
-            access_export: true,
-            is_active: true,
-          })
+          await UserModulesModel.create(
+            {
+              id_user: userID,
+              id_module: existsProfileModule.id,
+              id_submodule: null,
+              access_retrieve: true,
+              access_read: true,
+              access_edit: true,
+              access_delete: true,
+              access_export: true,
+              is_active: true,
+            },
+            { transaction }
+          )
         }
         for (const module of modules) {
-          await UserModulesModel.create({
-            id_user: userID,
-            id_module: module.id_module,
-            id_submodule: module.id_submodule || null,
-            access_retrieve: module.access_retrieve,
-            access_read: module.access_read,
-            access_edit: module.access_edit,
-            access_delete: module.access_delete,
-            access_export: module.access_export,
-            is_active: true,
-          })
+          await UserModulesModel.create(
+            {
+              id_user: userID,
+              id_module: module.id_module,
+              id_submodule: module.id_submodule || null,
+              access_retrieve: module.access_retrieve,
+              access_read: module.access_read,
+              access_edit: module.access_edit,
+              access_delete: module.access_delete,
+              access_export: module.access_export,
+              is_active: true,
+            },
+            { transaction }
+          )
         }
+        await transaction.commit()
         return true
       } catch (e) {
+        await transaction.rollback()
         return Promise.reject(Error(defaultError))
       }
     },

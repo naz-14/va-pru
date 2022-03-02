@@ -103,14 +103,14 @@ const UserResolver = {
         }),
         GetUserById: (_, { id }, context) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                if (context.roleId !== 1) {
-                    const isMaster = yield UserModel_1.default.findOne({
-                        where: { id, id_role: 1, is_active: true },
-                    });
-                    if (isMaster) {
-                        return Promise.reject(Error(userNotFound));
-                    }
-                }
+                // if (context.roleId !== 1) {
+                //   const isMaster = await User.findOne({
+                //     where: { id, id_role: 1, is_active: true },
+                //   })
+                //   if (isMaster) {
+                //     return Promise.reject(Error(userNotFound))
+                //   }
+                // }
                 const userExist = yield UserModel_1.default.findOne({
                     where: { id, is_active: true },
                 });

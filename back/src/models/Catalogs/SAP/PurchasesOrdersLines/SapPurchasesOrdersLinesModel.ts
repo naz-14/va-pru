@@ -3,20 +3,20 @@ import sequelize from '../../../../db/connection'
 
 interface SapPurchasesOrdersLinesAttributes {
   id: number
-  purcharse_order_id: number | null
-  line_num: number | null
+  purchases_order_id: number | null
+  line_number: number | null
   item_code: string | null
-  target_type: string | null
-  doc_entry: number | null
-  trget_entry: number | null
-  line_status: number | null
+  target_type: number | null
+  document_entry: number | null
+  target_entry: number | null
+  line_status: string | null
   quantity: number | null
-  open_qty: number | null
+  open_quantity: number | null
   price: number | null
   tax_code: string | null
   disc_prcnt: number | null
   line_total: number | null
-  whs_code: string | null
+  warehouses_code: number | null
   ieps: number | null
   iva: number | null
   total: number | null
@@ -27,20 +27,20 @@ interface SapPurchasesOrdersLinesCreationAttributes
   extends Optional<
     SapPurchasesOrdersLinesAttributes,
     | 'id'
-    | 'purcharse_order_id'
-    | 'line_num'
+    | 'purchases_order_id'
+    | 'line_number'
     | 'item_code'
     | 'target_type'
-    | 'doc_entry'
-    | 'trget_entry'
+    | 'document_entry'
+    | 'target_entry'
     | 'line_status'
     | 'quantity'
-    | 'open_qty'
+    | 'open_quantity'
     | 'price'
     | 'tax_code'
     | 'disc_prcnt'
     | 'line_total'
-    | 'whs_code'
+    | 'warehouses_code'
     | 'ieps'
     | 'iva'
     | 'total'
@@ -54,20 +54,20 @@ class SapPurchasesOrdersLines
   implements SapPurchasesOrdersLinesAttributes
 {
   public id!: number
-  public purcharse_order_id!: number
-  public line_num!: number
+  public purchases_order_id!: number
+  public line_number!: number
   public item_code!: string
-  public target_type!: string
-  public doc_entry!: number
-  public trget_entry!: number
-  public line_status!: number
+  public target_type!: number
+  public document_entry!: number
+  public target_entry!: number
+  public line_status!: string
   public quantity!: number
-  public open_qty!: number
+  public open_quantity!: number
   public price!: number
   public tax_code!: string
   public disc_prcnt!: number
   public line_total!: number
-  public whs_code!: string
+  public warehouses_code!: number
   public ieps!: number
   public iva!: number
   public total!: number
@@ -83,44 +83,44 @@ SapPurchasesOrdersLines.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    purcharse_order_id: {
+    purchases_order_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    line_num: {
+    line_number: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
     item_code: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     target_type: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    doc_entry: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    trget_entry: {
+    document_entry: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    target_entry: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
     line_status: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(1),
       allowNull: true,
     },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    open_qty: {
+    open_quantity: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
     price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     tax_code: {
@@ -128,15 +128,15 @@ SapPurchasesOrdersLines.init(
       allowNull: true,
     },
     disc_prcnt: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     line_total: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    whs_code: {
-      type: DataTypes.STRING,
+    warehouses_code: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     ieps: {
@@ -148,7 +148,7 @@ SapPurchasesOrdersLines.init(
       allowNull: true,
     },
     total: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: true,
     },
     is_active: {

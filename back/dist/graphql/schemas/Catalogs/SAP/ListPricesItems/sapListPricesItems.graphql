@@ -2,8 +2,8 @@ type SapListPricesItems {
   id: Int!
   item_code: String
   price_list: Int
-  price: Int
-  factor: Int
+  price: Float
+  factor: Float
   base_num: Int
 }
 

@@ -1,24 +1,24 @@
 type SapPurchasesOrdersLines {
     id: Int!
-    purcharse_order_id: Int
+    purchases_order_id: Int
     purchase_order: SapPurchasesOrders
-    line_num: Int
+    line_number: Int
     item_code: String
     item: SapItems
-    target_type: String
-    doc_entry: Int
-    trget_entry: Int
-    line_status: Int
+    target_type: Int
+    document_entry: Int
+    target_entry: Int
+    line_status: String
     quantity: Int
-    open_qty: Int
-    price: Int
+    open_quantity: Int
+    price: Float
     tax_code: String
-    disc_prcnt: Int
-    line_total: Int
-    whs_code: String
+    disc_prcnt: Float
+    line_total: Float
+    warehouses_code: Int
     ieps: Int
     iva: Int
-    total: Int
+    total: Float
 }
 
 type Query {
@@ -26,4 +26,10 @@ type Query {
         limit: Int
         offset: Int
     ): [SapPurchasesOrdersLines!]!
+}
+
+type Mutation{
+    getSapPurchasesOrdersLinesByPurchaseOrdersId(
+        purchasesOrdersId: [Int],
+    ): [SapPurchasesOrdersLines]!
 }

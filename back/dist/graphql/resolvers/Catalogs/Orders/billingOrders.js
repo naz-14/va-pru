@@ -17,7 +17,7 @@ const OrderModel_1 = __importDefault(require("../../../../models/Catalogs/Orders
 const ShippingCompanies_1 = __importDefault(require("../../../../models/Catalogs/ShippingCompanies/ShippingCompanies"));
 const TimeLineAdd_1 = require("../../../../helpers/TimeLineAdd");
 const connection_1 = __importDefault(require("../../../../db/connection"));
-const SulogReceiver_1 = __importDefault(require("../../../../helpers/SulogReceiver"));
+const ApiSapReceiver_1 = __importDefault(require("../../../../helpers/ApiSapReceiver"));
 const OrderInvoiceModel_1 = __importDefault(require("../../../../models/Catalogs/Orders/OrderInvoiceModel"));
 const orderNotFound = 'No se encontro el pedido';
 const logisticNotFound = 'No se encontro el empresa de logística';
@@ -113,7 +113,7 @@ const billingOrdersResolver = {
             const PrincipalOrder = yield OrderModel_1.default.findOne({
                 where: { id: order_id },
             });
-            const resp = yield (0, SulogReceiver_1.default)([
+            const resp = yield (0, ApiSapReceiver_1.default)([
                 {
                     key: `${order_id}`,
                     name: 'createOrder',

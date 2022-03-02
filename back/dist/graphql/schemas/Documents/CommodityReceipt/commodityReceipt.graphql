@@ -1,0 +1,26 @@
+type commodityReceipt {
+    id: Int!
+    schedule_id: Int
+    schedules: quotesData
+    purchases_orders_id: Int
+    purchases_orders: SapPurchasesOrders
+    purchases_orders_lines_id: Int
+    purchases_orders_lines: SapPurchasesOrdersLines
+    receipt_quantity: Int
+}
+
+input commodityReceiptInput {
+    scheduleId: Int!,
+    purchasesOrdersId: Int!,
+    purchasesOrdersLinesId: Int!,
+    quantity: Int!
+}
+
+type Query {
+    getAllCommodityReceipt: [commodityReceipt]!
+    getCommodityReceiptByScheduleId: [commodityReceipt]!
+}
+
+type Mutation {
+    createCommodityReceipt(commodityReceiptInput: [commodityReceiptInput!]!): Boolean
+}

@@ -4,6 +4,7 @@ import { Resolvers } from '../../../../generated'
 import SapPartnerGroup from '../../../../../models/Catalogs/SAP/PartnerGroup/SapPartnerGroupModel'
 import SapListPrices from '../../../../../models/Catalogs/SAP/ListPrices/SapListPricesModel'
 import SapNumberGroups from '../../../../../models/Catalogs/SAP/NumberGroups/SapNumberGroupsModel'
+import SapPurchasesOrders from '../../../../../models/Catalogs/SAP/PurchasesOrders/SapPurchasesOrdersModel'
 
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos'
 
@@ -13,6 +14,7 @@ const SapBusinessPartnerResolver: Resolvers = {
       const clause: any = {
         where: {
           is_active: 1,
+          card_type: 'S'
         },
       }
 
@@ -21,7 +23,20 @@ const SapBusinessPartnerResolver: Resolvers = {
         clause.limit = limit
       }
 
-      return await SapBusinessPartner.findAll(clause)
+      return await SapBusinessPartner.findAndCountAll(clause)
+    },
+  },
+  Mutation:{
+    getSapBusinessPartnerSellerById: async (_, { idBusinessPartner }) => {
+      const clause: any = {
+        where: {
+          is_active: 1,
+          card_type: 'S',
+          id:idBusinessPartner
+        },
+      }
+
+      return await SapBusinessPartner.findOne(clause)
     },
   },
   SapBusinessPartner: {

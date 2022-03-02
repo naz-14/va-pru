@@ -27,7 +27,21 @@ const SapPurchasesOrdersResolver = {
                 clause.offset = offset;
                 clause.limit = limit;
             }
-            return yield SapPurchasesOrdersModel_1.default.findAll(clause);
+            return yield SapPurchasesOrdersModel_1.default.findAndCountAll(clause);
+        }),
+    },
+    Mutation: {
+        getSapPurchasesOrdersByProvider: (_, { idBusinessPartner, limit, offset }) => __awaiter(void 0, void 0, void 0, function* () {
+            const clause = {
+                where: {
+                    business_partner_id: idBusinessPartner,
+                },
+            };
+            if (limit !== null && offset !== null) {
+                clause.offset = offset;
+                clause.limit = limit;
+            }
+            return yield SapPurchasesOrdersModel_1.default.findAndCountAll(clause);
         }),
     },
     SapPurchasesOrders: {

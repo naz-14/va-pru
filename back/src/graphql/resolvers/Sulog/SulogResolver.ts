@@ -1,7 +1,7 @@
 import { Resolvers } from '../../generated'
 import sequelize from '../../../db/connection'
 import Sulog from '../../../models/Sulog/SulogModel'
-import SulogReceiver from '../../../helpers/SulogReceiver'
+import ApiSapReceiver from '../../../helpers/ApiSapReceiver'
 
 const documentNotFound = 'El numero de documento no existe'
 const documentWasNotCreated = 'No se puedo crear el documento'
@@ -30,7 +30,7 @@ const SulogResolver: Resolvers = {
             },
           }
         })
-        const sulogCreate = await SulogReceiver(data)
+        const sulogCreate = await ApiSapReceiver(data)
 
         if (!sulogCreate) {
           await transaction.rollback()

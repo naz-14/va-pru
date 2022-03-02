@@ -282,45 +282,45 @@ const woocommerceResolver: Resolvers = {
       }
     },
   },
-  OrderExport:{
+  OrderExport: {
     platform_name: async ({ platform_id }) => {
       const query = await Platform.findOne({ where: { id: platform_id } })
-      if(query) return query.name
+      if (query) return query.name
       else return null
     },
     type_name: async ({ type_id }) => {
       const query = await OrderTypes.findOne({ where: { id: type_id } })
-      if(query) return query.name
+      if (query) return query.name
       else return null
     },
     platform: async ({ payment_id }) => {
       const query = await OrderPayment.findOne({ where: { id: payment_id } })
-      if(query) return query.platform
+      if (query) return query.platform
       else return null
     },
     id_payment: async ({ payment_id }) => {
       const query = await OrderPayment.findOne({ where: { id: payment_id } })
-      if(query) return query.payment_id
+      if (query) return query.payment_id
       else return null
     },
     shipping_first_name: async ({ shipping_id }) => {
       const query = await OrderShipping.findOne({ where: { id: shipping_id } })
-      if(query) return query.first_name
+      if (query) return query.first_name
       else return null
     },
     shipping_last_name: async ({ shipping_id }) => {
       const query = await OrderShipping.findOne({ where: { id: shipping_id } })
-      if(query) return query.last_name
+      if (query) return query.last_name
       else return null
     },
     store_name: async ({ store_id }) => {
       const query = await Store.findOne({ where: { id: store_id } })
-      if(query) return query.name
+      if (query) return query.name
       else return null
     },
     warehouse_name: async ({ warehouse_id }) => {
       const query = await Warehouse.findOne({ where: { id: warehouse_id } })
-      if(query) return query.name
+      if (query) return query.name
       else return null
     },
   },

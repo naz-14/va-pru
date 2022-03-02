@@ -18,9 +18,17 @@ type SapBusinessPartner {
     lic_trad_number: String
 }
 
+type SapBusinessPartnerRowsCount {
+  rows: [SapBusinessPartner]!
+  count: Int
+}
+
 type Query {
     getSapBusinessPartner(
         limit: Int
         offset: Int
-    ): [SapBusinessPartner!]!
+    ): SapBusinessPartnerRowsCount
+}
+type Mutation {
+    getSapBusinessPartnerSellerById(idBusinessPartner: Int):SapBusinessPartner
 }

@@ -33,6 +33,11 @@ OrdersWarehouse.init({
         type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
     },
+    uncompleted: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     is_active: {
         type: sequelize_1.DataTypes.BOOLEAN,
         allowNull: false,

@@ -19,7 +19,23 @@ const SapPurchasesOrdersResolver: Resolvers = {
         clause.limit = limit
       }
 
-      return await SapPurchasesOrders.findAll(clause)
+      return await SapPurchasesOrders.findAndCountAll(clause)
+    },
+  },
+  Mutation:{
+    getSapPurchasesOrdersByProvider: async (_, { idBusinessPartner, limit, offset }) => {
+      const clause: any = {
+        where: {
+          business_partner_id: idBusinessPartner,
+        },
+      }
+
+      if (limit !== null && offset !== null) {
+        clause.offset = offset
+        clause.limit = limit
+      }
+
+      return await SapPurchasesOrders.findAndCountAll(clause)
     },
   },
   SapPurchasesOrders: {

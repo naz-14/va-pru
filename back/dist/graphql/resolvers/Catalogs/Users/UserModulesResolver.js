@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const UserModulesModel_1 = __importDefault(require("../../../../models/Users/UserModulesModel"));
 const ModuleModel_1 = __importDefault(require("../../../../models/Catalogs/Modules/ModuleModel"));
 const SubmoduleModel_1 = __importDefault(require("../../../../models/Catalogs/Modules/SubmoduleModel"));
+const connection_1 = __importDefault(require("../../../../db/connection"));
 const userPermissionsNotFound = 'No se encontrarón permisos para el usuario';
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos';
 const UserModulesResolver = {
@@ -31,9 +32,11 @@ const UserModulesResolver = {
             }
         }),
         updateUserPermission: (_, { userID, modules }) => __awaiter(void 0, void 0, void 0, function* () {
+            const transaction = yield connection_1.default.transaction(); //START TRANSACTION
             try {
                 const userModulesFound = yield UserModulesModel_1.default.findAll({
                     where: { id_user: userID, is_active: true },
+                    transaction,
                 });
                 if (!userModulesFound)
                     return Promise.reject(Error(userPermissionsNotFound));
@@ -54,7 +57,7 @@ const UserModulesResolver = {
                         access_delete: true,
                         access_export: true,
                         is_active: true,
-                    });
+                    }, { transaction });
                 }
                 for (const module of modules) {
                     yield UserModulesModel_1.default.create({
@@ -67,11 +70,13 @@ const UserModulesResolver = {
                         access_delete: module.access_delete,
                         access_export: module.access_export,
                         is_active: true,
-                    });
+                    }, { transaction });
                 }
+                yield transaction.commit();
                 return true;
             }
             catch (e) {
+                yield transaction.rollback();
                 return Promise.reject(Error(defaultError));
             }
         }),

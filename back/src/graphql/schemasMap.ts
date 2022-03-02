@@ -40,7 +40,6 @@ import * as PickingOrdersTypeDefs from './schemas/Catalogs/Orders/pickingOrders.
 import * as PackingOrdersTypeDefs from './schemas/Catalogs/Orders/packingOrders.graphql'
 import * as AppOrdersWarehouseTypeDefs from './schemas/App/Catalogs/OrdersWarehouse/OrdersWarehouse.graphql'
 import * as ReasonsTypeDefs from './schemas/Catalogs/Reasons/reasons.graphql'
-import * as QuotesTypeDefs from './schemas/Catalogs/Quotes/quotes.graphql'
 import * as DocumentStatusTypeDefs from './schemas/Catalogs/Documents/documentStatus.graphql'
 import * as SapListPricesItemsTypeDefs from './schemas/Catalogs/SAP/ListPricesItems/sapListPricesItems.graphql'
 import * as SapListPricesTypeDefs from './schemas/Catalogs/SAP/ListPrices/sapListPrices.graphql'
@@ -52,6 +51,12 @@ import * as SapPurchasesOrdersTypeDefs from './schemas/Catalogs/SAP/PurchasesOrd
 import * as SapPurchasesOrdersLinesTypeDefs from './schemas/Catalogs/SAP/PurchasesOrdersLines/sapPurchasesOrdersLines.graphql'
 import * as SapWarehousesTypeDefs from './schemas/Catalogs/SAP/Warehouses/sapWarehouses.graphql'
 import * as BoxesTypeDefs from './schemas/Catalogs/Boxes/boxes.graphql'
+import * as SapTransfersTypeDefs from './schemas/Catalogs/SAP/Transfers/sapTransfers.graphql'
+import * as SapProductsTypeDefs from './schemas/Catalogs/SAP/Products/sapProducts.graphql'
+import * as ScheduleTypeDefs from './schemas/Documents/Schedule/schedule.graphql'
+import * as ScheduleOrdersLinesTypeDefs from './schemas/Documents/ScheduleOrdersLines/scheduleOrdersLines.graphql'
+import * as DocksTypeDefs from './schemas/Catalogs/Docks/docks.graphql'
+import * as CommodityReceiptTypeDefs from './schemas/Documents/CommodityReceipt/commodityReceipt.graphql'
 import { makeExecutableSchema } from 'graphql-tools'
 import resolversMap from './resolversMap'
 import { GraphQLSchema } from 'graphql'
@@ -99,7 +104,7 @@ const schema: GraphQLSchema = makeExecutableSchema({
     PackingOrdersTypeDefs,
     AppOrdersWarehouseTypeDefs,
     ReasonsTypeDefs,
-    QuotesTypeDefs,
+    ScheduleTypeDefs,
     DocumentStatusTypeDefs,
     SapListPricesItemsTypeDefs,
     SapListPricesTypeDefs,
@@ -111,6 +116,11 @@ const schema: GraphQLSchema = makeExecutableSchema({
     SapPurchasesOrdersLinesTypeDefs,
     SapWarehousesTypeDefs,
     BoxesTypeDefs,
+    SapTransfersTypeDefs,
+    SapProductsTypeDefs,
+    ScheduleOrdersLinesTypeDefs,
+    DocksTypeDefs,
+    CommodityReceiptTypeDefs,
   ],
   resolvers: resolversMap,
 })

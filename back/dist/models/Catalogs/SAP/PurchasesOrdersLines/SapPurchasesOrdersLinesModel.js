@@ -13,44 +13,44 @@ SapPurchasesOrdersLines.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    purcharse_order_id: {
+    purchases_order_id: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
-    line_num: {
+    line_number: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
     item_code: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.STRING(50),
         allowNull: true,
     },
     target_type: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: true,
-    },
-    doc_entry: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
-    trget_entry: {
+    document_entry: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: true,
+    },
+    target_entry: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
     line_status: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.STRING(1),
         allowNull: true,
     },
     quantity: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
-    open_qty: {
+    open_quantity: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
     price: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     tax_code: {
@@ -58,15 +58,15 @@ SapPurchasesOrdersLines.init({
         allowNull: true,
     },
     disc_prcnt: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     line_total: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
-    whs_code: {
-        type: sequelize_1.DataTypes.STRING,
+    warehouses_code: {
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
     ieps: {
@@ -78,7 +78,7 @@ SapPurchasesOrdersLines.init({
         allowNull: true,
     },
     total: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     is_active: {

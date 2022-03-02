@@ -41,6 +41,11 @@ const OrdersWarehouseResolver: Resolvers = {
         return pubsub.asyncIterator('pickingOrderCompleted')
       },
     },
+    pickingOrderUncompleted: {
+      subscribe: (_, __) => {
+        return pubsub.asyncIterator('pickingOrderUncompleted')
+      },
+    },
     packingOrderChanged: {
       subscribe: (_, __) => {
         return pubsub.asyncIterator('packingOrderChanged')
@@ -83,13 +88,15 @@ const OrdersWarehouseResolver: Resolvers = {
     getAppOrderWarehouseById: async (_, { id }, context) => {
       try {
         const order = await OrdersWarehouse.findOne({ where: { id } })
+        console.log('AAAAAAAAAAAAa')
         if (!order) {
           throw new Error('Order not found')
         }
         const products = await OrderProduct.findAll({
-          where: { order_id: order.id },
+          where: { order_id: order.order_id },
           raw: true,
         })
+        console.log(products)
         const productArray: ProductsOrderWarehouse[] = []
         // forEach product shuild get the rack and append it to the product
         products.forEach((product) => {
@@ -161,6 +168,7 @@ const OrdersWarehouseResolver: Resolvers = {
       })
     },
     getAppUserWarehouseOrdersPacking(_, {}, context) {
+      console.log(context)
       return OrdersWarehouse.findAll({
         where: {
           packing_user_id: context.userId,
@@ -271,6 +279,36 @@ const OrdersWarehouseResolver: Resolvers = {
         return false
       }
     },
+    unavailableProduct: async (_, { orderProductId }, context) => {
+      try {
+        const orderProduct = await OrderProduct.findOne({
+          where: { id: orderProductId },
+        })
+        if (orderProduct) {
+          orderProduct.unavailable = true
+          await orderProduct.save()
+          return true
+        }
+        return false
+      } catch (e) {
+        return false
+      }
+    },
+    changeOrderToUncompleted: async (_, { id }) => {
+      try {
+        const order = await OrdersWarehouse.findOne({
+          where: { id },
+        })
+        if (order) {
+          order.uncompleted = true
+          await order.save()
+          return true
+        }
+        return false
+      } catch (e) {
+        return false
+      }
+    },
     validateRack: async (_, { warehouseOrderId, rackCode }, context) => {
       const transaction = await sequelize.transaction()
       try {
@@ -317,6 +355,31 @@ const OrdersWarehouseResolver: Resolvers = {
           })
           await pubsub.publish('pickingOrderCompleted', {
             pickingOrderCompleted: orderUpdated,
+          })
+          return true
+        }
+        return false
+      } catch (e) {
+        return false
+      }
+    },
+    validateRackUncompleted: async (_, { rackCode, warehouseOrderId }) => {
+      try {
+        let order = await OrdersWarehouse.findOne({
+          where: { id: warehouseOrderId },
+          raw: true,
+        })
+        if (order) {
+          await OrdersWarehouse.update(
+            {
+              open: true,
+              rack_id: rackCode,
+              picking_user_id: null,
+            },
+            { where: { id: warehouseOrderId } }
+          )
+          await pubsub.publish('pickingOrderUncompleted', {
+            pickingOrderUncompleted: order,
           })
           return true
         }

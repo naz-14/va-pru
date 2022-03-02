@@ -2,24 +2,43 @@ type SapPurchasesOrders {
     id: Int!
     business_partner_id: Int
     business_partner: SapBusinessPartner
-    doc_date: String
-    doc_due_date: String
-    num_at_card: String
-    doc_total: Int
+    document_date: String
+    document_due_date: String
+    number_at_card: String
+    document_total: Float
     comments: String
-    status: Int
-    doc_num: Int
-    doc_entry: Int
+    document_status: String
+    document_number: Int
+    document_entry: Int
     series: Int
-    series_name: String
-    price_list: Int
     disc_prcnt: Int
     purchases_orders_lines: [SapPurchasesOrdersLines]
+}
+type SapPurchasesOrdersByProvider {
+    id: Int!
+    document_date: String
+    comments: String
+    document_status: String
+}
+type SapPurchasesOrdersRowsCount {
+  rows: [SapPurchasesOrders]!
+  count: Int
+}
+type SapPurchasesOrdersByProviderRowsCount {
+  rows: [SapPurchasesOrdersByProvider]!
+  count: Int
 }
 
 type Query {
     getSapPurchasesOrders(
         limit: Int
         offset: Int
-    ): [SapPurchasesOrders!]!
+    ): SapPurchasesOrdersRowsCount
+}
+type Mutation{
+    getSapPurchasesOrdersByProvider(
+        idBusinessPartner: Int
+        limit: Int
+        offset: Int
+    ): SapPurchasesOrdersByProviderRowsCount
 }

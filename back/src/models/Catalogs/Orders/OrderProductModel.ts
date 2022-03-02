@@ -12,12 +12,17 @@ interface OrderProductAttributes {
   total: number
   variation_id: number
   picked: boolean
+  partial_picked: number
+  unavailable: boolean
   packed: boolean
   is_active: boolean
 }
 
 interface OrderProductCreationAttributes
-  extends Optional<OrderProductAttributes, 'id' | 'picked' | 'packed'> {}
+  extends Optional<
+    OrderProductAttributes,
+    'id' | 'picked' | 'packed' | 'partial_picked' | 'unavailable'
+  > {}
 
 class OrderProduct
   extends Model<OrderProductAttributes, OrderProductCreationAttributes>
@@ -33,6 +38,8 @@ class OrderProduct
   public total!: number
   public variation_id!: number
   public picked!: boolean
+  public partial_picked!: number
+  public unavailable!: boolean
   public packed!: boolean
   public is_active!: boolean
   public readonly createdAt!: Date
@@ -83,7 +90,17 @@ OrderProduct.init(
       allowNull: true,
       defaultValue: false,
     },
+    partial_picked: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+    },
     packed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false,
+    },
+    unavailable: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false,

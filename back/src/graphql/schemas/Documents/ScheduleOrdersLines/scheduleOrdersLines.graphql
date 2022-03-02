@@ -1,0 +1,21 @@
+type QuotesOrdersLines {
+  id: Int
+  business_partner_id: Int
+  business_partner: SapBusinessPartner
+  schedule_id: Int
+  schedule: quotesData
+  sap_purchases_orders_id: Int
+  purchases_orders: SapPurchasesOrders
+  sap_purchases_orders_lines_id: Int
+  purchases_orders_lines: SapPurchasesOrdersLines
+}
+
+type Query {
+  getQuotesOrdersLines: [QuotesOrdersLines]!
+  getQuotesOrdersLinesByQuotesId(quotesId: Int): [QuotesOrdersLines]!
+}
+
+type Mutation {
+  getQuotesOrdersLinesById(purchasesOrdersLineId: Int): [QuotesOrdersLines]!
+  getScheduleOrdersLinesByScheduleId(scheduleId: Int): [QuotesOrdersLines]!
+}

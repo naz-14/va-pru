@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const SapPurchasesOrdersLinesModel_1 = __importDefault(require("../../../../../models/Catalogs/SAP/PurchasesOrdersLines/SapPurchasesOrdersLinesModel"));
 const SapPurchasesOrdersModel_1 = __importDefault(require("../../../../../models/Catalogs/SAP/PurchasesOrders/SapPurchasesOrdersModel"));
 const SapItemsModel_1 = __importDefault(require("../../../../../models/Catalogs/SAP/Items/SapItemsModel"));
+const sequelize_1 = require("sequelize");
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos';
 const SapPurchasesOrdersLinesResolver = {
     Query: {
@@ -31,18 +32,34 @@ const SapPurchasesOrdersLinesResolver = {
             return yield SapPurchasesOrdersLinesModel_1.default.findAll(clause);
         }),
     },
+    Mutation: {
+        getSapPurchasesOrdersLinesByPurchaseOrdersId: (_, { purchasesOrdersId }) => __awaiter(void 0, void 0, void 0, function* () {
+            const clause = {
+                where: {
+                    is_active: true,
+                },
+            };
+            if (purchasesOrdersId) {
+                const newClause = purchasesOrdersId.map((id) => {
+                    return { purchases_order_id: id };
+                });
+                clause.where[sequelize_1.Op.or] = newClause;
+            }
+            return yield SapPurchasesOrdersLinesModel_1.default.findAll(clause);
+        }),
+    },
     SapPurchasesOrdersLines: {
-        purchase_order: ({ purcharse_order_id }) => __awaiter(void 0, void 0, void 0, function* () {
+        purchase_order: ({ purchases_order_id }) => __awaiter(void 0, void 0, void 0, function* () {
             return yield SapPurchasesOrdersModel_1.default.findOne({
                 where: {
-                    id: purcharse_order_id,
+                    id: purchases_order_id,
                 },
             });
         }),
         item: ({ item_code }) => __awaiter(void 0, void 0, void 0, function* () {
             return yield SapItemsModel_1.default.findOne({
                 where: {
-                    item_code,
+                    item_code: item_code,
                 },
             });
         }),

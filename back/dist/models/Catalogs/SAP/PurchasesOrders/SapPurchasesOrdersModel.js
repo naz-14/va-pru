@@ -17,35 +17,35 @@ SapPurchasesOrders.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
-    doc_date: {
+    document_date: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
     },
-    doc_due_date: {
+    document_due_date: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
     },
-    num_at_card: {
+    number_at_card: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
     },
-    doc_total: {
-        type: sequelize_1.DataTypes.INTEGER,
+    document_total: {
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     comments: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
     },
-    status: {
+    document_status: {
+        type: sequelize_1.DataTypes.STRING(1),
+        allowNull: true,
+    },
+    document_number: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
-    doc_num: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: true,
-    },
-    doc_entry: {
+    document_entry: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
@@ -53,17 +53,10 @@ SapPurchasesOrders.init({
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
-    series_name: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: true,
-    },
-    price_list: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: true,
-    },
     disc_prcnt: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: false,
     },
     is_active: {
         type: sequelize_1.DataTypes.BOOLEAN,

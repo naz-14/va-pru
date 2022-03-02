@@ -36,7 +36,6 @@ const pickingOrders_1 = __importDefault(require("./resolvers/Catalogs/Orders/pic
 const packingOrders_1 = __importDefault(require("./resolvers/Catalogs/Orders/packingOrders"));
 const OrdersWarehouse_1 = __importDefault(require("./resolvers/App/Catalogs/OrdersWarehouse/OrdersWarehouse"));
 const ReasonsResolver_1 = __importDefault(require("./resolvers/Catalogs/Reasons/ReasonsResolver"));
-const QuotesResolver_1 = __importDefault(require("./resolvers/Catalogs/Quotes/QuotesResolver"));
 const DocumentStatusResolver_1 = __importDefault(require("./resolvers/Catalogs/Documents/DocumentStatusResolver"));
 const SapListPricesItemsResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/ListPricesItems/SapListPricesItemsResolver"));
 const SapListPricesResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/ListPrices/SapListPricesResolver"));
@@ -48,6 +47,12 @@ const SapPurchasesOrdersResolver_1 = __importDefault(require("./resolvers/Catalo
 const SapPurchasesOrdersLinesResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/PurchasesOrdersLine/SapPurchasesOrdersLinesResolver"));
 const SapWarehousesResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/Warehouses/SapWarehousesResolver"));
 const Boxes_1 = __importDefault(require("./resolvers/Catalogs/Boxes/Boxes"));
+const SapTransfersResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/Transfers/SapTransfersResolver"));
+const SapProducts_1 = __importDefault(require("./resolvers/Catalogs/SAP/Products/SapProducts"));
+const ScheduleOrdersLinesResolver_1 = __importDefault(require("./resolvers/Documents/ScheduleOrdersLines/ScheduleOrdersLinesResolver"));
+const ScheduleResolver_1 = __importDefault(require("./resolvers/Documents/Schedule/ScheduleResolver"));
+const DocksResolver_1 = __importDefault(require("./resolvers/Catalogs/Docks/DocksResolver"));
+const CommodityReceipt_1 = __importDefault(require("./resolvers/Documents/CommodityReceipt/CommodityReceipt"));
 const resolversMap = (0, lodash_1.merge)([
     UserResolver_1.default,
     AuthResolver_1.default,
@@ -81,7 +86,6 @@ const resolversMap = (0, lodash_1.merge)([
     packingOrders_1.default,
     OrdersWarehouse_1.default,
     ReasonsResolver_1.default,
-    QuotesResolver_1.default,
     DocumentStatusResolver_1.default,
     SapListPricesItemsResolver_1.default,
     SapListPricesResolver_1.default,
@@ -93,5 +97,11 @@ const resolversMap = (0, lodash_1.merge)([
     SapPurchasesOrdersLinesResolver_1.default,
     SapWarehousesResolver_1.default,
     Boxes_1.default,
+    SapTransfersResolver_1.default,
+    SapProducts_1.default,
+    ScheduleResolver_1.default,
+    ScheduleOrdersLinesResolver_1.default,
+    DocksResolver_1.default,
+    CommodityReceipt_1.default,
 ]);
 exports.default = resolversMap;

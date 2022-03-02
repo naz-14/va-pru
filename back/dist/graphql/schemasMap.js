@@ -64,7 +64,6 @@ const PickingOrdersTypeDefs = __importStar(require("./schemas/Catalogs/Orders/pi
 const PackingOrdersTypeDefs = __importStar(require("./schemas/Catalogs/Orders/packingOrders.graphql"));
 const AppOrdersWarehouseTypeDefs = __importStar(require("./schemas/App/Catalogs/OrdersWarehouse/OrdersWarehouse.graphql"));
 const ReasonsTypeDefs = __importStar(require("./schemas/Catalogs/Reasons/reasons.graphql"));
-const QuotesTypeDefs = __importStar(require("./schemas/Catalogs/Quotes/quotes.graphql"));
 const DocumentStatusTypeDefs = __importStar(require("./schemas/Catalogs/Documents/documentStatus.graphql"));
 const SapListPricesItemsTypeDefs = __importStar(require("./schemas/Catalogs/SAP/ListPricesItems/sapListPricesItems.graphql"));
 const SapListPricesTypeDefs = __importStar(require("./schemas/Catalogs/SAP/ListPrices/sapListPrices.graphql"));
@@ -76,6 +75,12 @@ const SapPurchasesOrdersTypeDefs = __importStar(require("./schemas/Catalogs/SAP/
 const SapPurchasesOrdersLinesTypeDefs = __importStar(require("./schemas/Catalogs/SAP/PurchasesOrdersLines/sapPurchasesOrdersLines.graphql"));
 const SapWarehousesTypeDefs = __importStar(require("./schemas/Catalogs/SAP/Warehouses/sapWarehouses.graphql"));
 const BoxesTypeDefs = __importStar(require("./schemas/Catalogs/Boxes/boxes.graphql"));
+const SapTransfersTypeDefs = __importStar(require("./schemas/Catalogs/SAP/Transfers/sapTransfers.graphql"));
+const SapProductsTypeDefs = __importStar(require("./schemas/Catalogs/SAP/Products/sapProducts.graphql"));
+const ScheduleTypeDefs = __importStar(require("./schemas/Documents/Schedule/schedule.graphql"));
+const ScheduleOrdersLinesTypeDefs = __importStar(require("./schemas/Documents/ScheduleOrdersLines/scheduleOrdersLines.graphql"));
+const DocksTypeDefs = __importStar(require("./schemas/Catalogs/Docks/docks.graphql"));
+const CommodityReceiptTypeDefs = __importStar(require("./schemas/Documents/CommodityReceipt/commodityReceipt.graphql"));
 const graphql_tools_1 = require("graphql-tools");
 const resolversMap_1 = __importDefault(require("./resolversMap"));
 const schema = (0, graphql_tools_1.makeExecutableSchema)({
@@ -121,7 +126,7 @@ const schema = (0, graphql_tools_1.makeExecutableSchema)({
         PackingOrdersTypeDefs,
         AppOrdersWarehouseTypeDefs,
         ReasonsTypeDefs,
-        QuotesTypeDefs,
+        ScheduleTypeDefs,
         DocumentStatusTypeDefs,
         SapListPricesItemsTypeDefs,
         SapListPricesTypeDefs,
@@ -133,6 +138,11 @@ const schema = (0, graphql_tools_1.makeExecutableSchema)({
         SapPurchasesOrdersLinesTypeDefs,
         SapWarehousesTypeDefs,
         BoxesTypeDefs,
+        SapTransfersTypeDefs,
+        SapProductsTypeDefs,
+        ScheduleOrdersLinesTypeDefs,
+        DocksTypeDefs,
+        CommodityReceiptTypeDefs,
     ],
     resolvers: resolversMap_1.default,
 });

@@ -32,7 +32,6 @@ import PickingOrdersResolver from './resolvers/Catalogs/Orders/pickingOrders'
 import PackingOrdersResolver from './resolvers/Catalogs/Orders/packingOrders'
 import OrdersWarehouseResolver from './resolvers/App/Catalogs/OrdersWarehouse/OrdersWarehouse'
 import ReasonsResolver from './resolvers/Catalogs/Reasons/ReasonsResolver'
-import QuoteResolver from './resolvers/Catalogs/Quotes/QuotesResolver'
 import DocumentStatusResolver from './resolvers/Catalogs/Documents/DocumentStatusResolver'
 import SapListPricesItemsResolver from './resolvers/Catalogs/SAP/ListPricesItems/SapListPricesItemsResolver'
 import SapListPricesResolver from './resolvers/Catalogs/SAP/ListPrices/SapListPricesResolver'
@@ -44,6 +43,12 @@ import SapPurchasesOrdersResolver from './resolvers/Catalogs/SAP/PurchasesOrders
 import SapPurchasesOrdersLinesResolver from './resolvers/Catalogs/SAP/PurchasesOrdersLine/SapPurchasesOrdersLinesResolver'
 import SapWarehousesResolver from './resolvers/Catalogs/SAP/Warehouses/SapWarehousesResolver'
 import BoxesResolver from './resolvers/Catalogs/Boxes/Boxes'
+import SapTransfersResolver from './resolvers/Catalogs/SAP/Transfers/SapTransfersResolver'
+import SapProductsResolver from './resolvers/Catalogs/SAP/Products/SapProducts'
+import ScheduleOrdersLinesResolver from './resolvers/Documents/ScheduleOrdersLines/ScheduleOrdersLinesResolver'
+import ScheduleResolver from './resolvers/Documents/Schedule/ScheduleResolver'
+import DocksResolver from './resolvers/Catalogs/Docks/DocksResolver'
+import CommodityReceiptResolver from './resolvers/Documents/CommodityReceipt/CommodityReceipt'
 
 const resolversMap: Resolvers = merge([
   UserResolver,
@@ -78,7 +83,6 @@ const resolversMap: Resolvers = merge([
   PackingOrdersResolver,
   OrdersWarehouseResolver,
   ReasonsResolver,
-  QuoteResolver,
   DocumentStatusResolver,
   SapListPricesItemsResolver,
   SapListPricesResolver,
@@ -90,6 +94,12 @@ const resolversMap: Resolvers = merge([
   SapPurchasesOrdersLinesResolver,
   SapWarehousesResolver,
   BoxesResolver,
+  SapTransfersResolver,
+  SapProductsResolver,
+  ScheduleResolver,
+  ScheduleOrdersLinesResolver,
+  DocksResolver,
+  CommodityReceiptResolver,
 ])
 
 export default resolversMap

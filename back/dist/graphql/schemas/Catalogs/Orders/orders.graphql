@@ -149,7 +149,9 @@ type Product {
     total: Float!
     variation_id: Int
     picked: Boolean
+    partial_picked: Int
     packed: Boolean
+    unavailable: Boolean
 }
 
 type woocommerceOrder {

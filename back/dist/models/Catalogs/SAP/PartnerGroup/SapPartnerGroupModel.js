@@ -20,6 +20,7 @@ SapPartnerGroup.init({
     group_name: {
         type: sequelize_1.DataTypes.STRING(20),
         allowNull: true,
+        defaultValue: null,
     },
     group_type: {
         type: sequelize_1.DataTypes.CHAR(1),

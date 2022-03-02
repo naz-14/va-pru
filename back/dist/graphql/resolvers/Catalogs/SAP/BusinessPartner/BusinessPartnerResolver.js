@@ -23,13 +23,26 @@ const SapBusinessPartnerResolver = {
             const clause = {
                 where: {
                     is_active: 1,
+                    card_type: 'S'
                 },
             };
             if (limit !== null && offset !== null) {
                 clause.offset = offset;
                 clause.limit = limit;
             }
-            return yield SapBusinessPartnerModel_1.default.findAll(clause);
+            return yield SapBusinessPartnerModel_1.default.findAndCountAll(clause);
+        }),
+    },
+    Mutation: {
+        getSapBusinessPartnerSellerById: (_, { idBusinessPartner }) => __awaiter(void 0, void 0, void 0, function* () {
+            const clause = {
+                where: {
+                    is_active: 1,
+                    card_type: 'S',
+                    id: idBusinessPartner
+                },
+            };
+            return yield SapBusinessPartnerModel_1.default.findOne(clause);
         }),
     },
     SapBusinessPartner: {

@@ -22,11 +22,11 @@ SapListPricesItems.init({
         allowNull: true,
     },
     price: {
-        type: sequelize_1.DataTypes.DECIMAL,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     factor: {
-        type: sequelize_1.DataTypes.DECIMAL,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     base_num: {

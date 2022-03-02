@@ -15,7 +15,6 @@ import stockRoutes from './restApi/router/stockRoutes'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { execute, subscribe } from 'graphql'
 import { PubSub } from 'graphql-subscriptions'
-
 ;(async () => {
   try {
     sequelize.sync({ alter: false })

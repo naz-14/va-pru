@@ -42,7 +42,7 @@ SapItems.init({
         allowNull: true,
     },
     sal_pack_un: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: sequelize_1.DataTypes.BIGINT,
         allowNull: true,
     },
     indirect_tax: {
