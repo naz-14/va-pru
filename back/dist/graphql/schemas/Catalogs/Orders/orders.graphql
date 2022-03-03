@@ -1,0 +1,205 @@
+type Order {
+    id: Int!
+    platform_id: Int!
+    platform: Platform
+    order_id: Int!
+    order_date: String
+    status_id: Int!
+    status: Status
+    reason: Reason
+    user_id: Int
+    uber_id: String
+    user: UserDetails
+    type_id: Int!
+    type: Type
+    store_id: Int
+    store: Store
+    warehouse_id: Int
+    warehouse: Warehouse
+    method_id: Int!
+    method: Method
+    shipping_id: Int!
+    shippingCompany: detailsCompany
+    shipping_company_id: Int
+    shipping: Shipping
+    payment_id: Int!
+    payment: Payment
+    innvoice_id: Int
+    product_quantity: Int!
+    total_price: Float!
+    shipping_price: Float!
+    order_doc_num: Int
+    num_at_card: String
+    products: [Product]
+}
+
+type OrderExport{
+    id: Int!
+    order_date: String
+    platform_id: Int!
+    platform_name: String
+    type_id: Int!
+    type_name: String
+    payment_id: Int!
+    id_payment: String
+    platform: String
+    shipping_id: Int!
+    shipping_first_name: String
+    shipping_last_name: String
+    order_id: Int
+    store_id: Int
+    store_name: String
+    warehouse_id: Int
+    warehouse_name: String
+}
+
+type detailsCompany {
+    id: Int!
+    name: String!
+}
+
+type Platform {
+    id: Int!
+    name: String!
+}
+
+type Status {
+    id: Int!
+    name: String!
+}
+
+type Reason {
+    id: Int!
+    order_id: Int!
+    reason: String
+    issusse_id: Int!
+    user_id: Int!
+    userDetails: UserDetails
+    issusesDetails: IssusesDetails
+    is_active: Boolean!
+    createdAt: String!
+}
+
+type UserDetails {
+    id: Int!
+    name: String!
+}
+
+type IssusesDetails {
+    id: Int!
+    name: String!
+}
+
+type Type {
+    id: Int!
+    name: String!
+}
+
+type Store {
+    name: String!
+    uber_id: String!
+    phone: String!
+    address: String!
+}
+
+type Warehouse {
+    name: String!
+    phone: String!
+    address: String!
+}
+
+type Method {
+    id: Int!
+    name: String!
+}
+
+type Shipping {
+    id: Int!
+    first_name: String!
+    last_name: String!
+    order_id: Int!
+    company: String
+    address_1: String!
+    address_2: String
+    city: String!
+    state: String!
+    postcode: String!
+    country: String!
+    email: String!
+    phone: String!
+    id_file_receipt: Int
+    receipt: typeFile
+}
+
+type Payment {
+    id: Int!
+    order_id: Int!
+    platform: String!
+    payment_id: String!
+}
+
+type Product {
+    id: Int!
+    product_id: Int!
+    sku: String!
+    name: String!
+    order_id: Int!
+    quantity: Int!
+    price: Float!
+    total: Float!
+    variation_id: Int
+    picked: Boolean
+    partial_picked: Int
+    packed: Boolean
+    unavailable: Boolean
+}
+
+type woocommerceOrder {
+    id: ID!
+    number: String!
+    status: String!
+}
+
+input ProductInput {
+    product_id: Int!
+    sku: String!
+    name: String!
+    order_id: Int!
+    quantity: Int!
+    price: Float!
+    total: Float!
+    variation_id: Int
+}
+
+type OrderRowsCount {
+    rows: [Order]
+    count: Int
+}
+
+type Query {
+    getPendingOrders(
+        searchQuery: String
+        limit: Int
+        offset: Int
+        platform: Int
+    ): OrderRowsCount
+    getAllOrders: [woocommerceOrder!]!
+    # getPendingOrders: [Order]
+    getOrderById(id: Int!): Order
+    getOrderByIdAndStatus(id: Int!, status_id: [Int], type_id: Int): Order
+    getOneOrder(id: Int!): woocommerceOrder!
+    getAllStatusesOrders: [Status!]!
+}
+
+type Mutation {
+    getAllPendingExport: [OrderExport!]!
+    getAllProcessExport: [OrderExport!]!
+    getAllBillingExport: [OrderExport!]!
+    getAllToStockExport: [OrderExport!]!
+    getAllLocalExport: [OrderExport!]!
+    getAllNationalExport: [OrderExport!]!
+    getAllShippedExport: [OrderExport!]!
+    getAllRejectedExport: [OrderExport!]!
+    getAllInRouteExport: [OrderExport!]!
+    getAllCollectExport: [OrderExport!]!
+}

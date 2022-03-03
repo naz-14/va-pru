@@ -1,0 +1,12 @@
+type Query{
+    getShippedOrders(
+        searchQuery: String
+        limit: Int
+        offset: Int
+        platform: Int
+    ): OrderRowsCount
+}
+
+type Mutation {
+  changeToShipped(order_id: Int!): Order
+}

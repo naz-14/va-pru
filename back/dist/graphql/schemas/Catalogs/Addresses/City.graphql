@@ -1,0 +1,6 @@
+type citiesCatalog {
+  id: Int!
+  name: String!
+  id_state: Int!
+  active: Boolean
+}

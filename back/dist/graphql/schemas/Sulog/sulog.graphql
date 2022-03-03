@@ -1,0 +1,33 @@
+# type sulogDoc {
+#   id: Int!
+#   cardCode: String
+#   cardName: String
+#   docDate: String
+#   docStatus: String
+#   comments: String
+#   numAtCard: String
+#   route: String
+#   whsCode: String
+# }
+
+type sulogDoc {
+  name: String
+  key: String
+  result: statusDetails!
+}
+
+type statusDetails {
+  statusCode: Int!
+  objType: String
+  docNum: Int
+  message: String
+}
+
+type Query {
+  getAllSulogDocs: [sulogDoc]!
+  getOneSulogDoc(id: Int!): sulogDoc
+}
+
+type Mutation {
+  createSulogDoc(ordersId: [Int!]!): [sulogDoc]!
+}

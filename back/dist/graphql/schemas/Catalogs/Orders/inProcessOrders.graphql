@@ -1,0 +1,12 @@
+type Query{
+  getInProcessOrders(
+      searchQuery: String
+      limit: Int
+      offset: Int
+      platform: Int
+  ): OrderRowsCount
+}
+
+type Mutation {
+  changeToProcess(order_id: Int!, store_id: Int!): Order
+}

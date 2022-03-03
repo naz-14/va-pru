@@ -1,0 +1,116 @@
+input schedulesInput {
+  dock_ids: [DocksData!]!
+  document_date: String!
+  document_time_start: String!
+  document_time_end: String!
+  comments: String
+  warehouse_code: String!
+  document_status_id: Int!
+  ordersReceived:[OrdersReceivedData!]!
+  provider_id: Int!
+}
+input OrdersReceivedData{
+  purcharse_order_id:Int!,
+  id_order:Int!,
+}
+input DocksData{
+  label:String!,
+  value:Int!
+}
+
+type Schedule {
+  id: Int!
+  document_date: String!
+  document_time_start: String!
+  document_time_end: String!
+  comments: String
+  warehouse_code: String!
+  warehouse: SapWarehouses
+  document_status_id: Int!
+  status: Status
+  scheduleLines:[QuotesOrdersLines]
+}
+#RES OF SAP
+type Provider {
+  name: String
+  key: String
+  result: ProviderResult
+}
+type ProviderResult {
+  statusCode: Int
+  businessPartner: BusinessPartner
+  openOrders: [OpenOrders]
+}
+type BusinessPartner {
+  cardCode: String
+  cardName: String
+  cardType: String
+  address: String
+  zipCode: String
+  mailAdress: String
+}
+type Warehouse {
+  id: Int!
+  warehouse_code: String
+  warehouse_name: String
+}
+type OpenOrders {
+  transId: Int
+  docEntry: Int
+  cardCode: String
+  cardName: String
+  objType: String
+  docNum: Int
+  docDate: String
+  series: Int
+  docStatus: String
+  comments: String
+  numAtCard: Int
+  docTotal: Float
+}
+type SapPurchasesOrdersQuotes {
+  id: Int!
+  business_partner_id: Int
+  business_partner: SapBusinessPartner
+  document_date: String
+  document_due_date: String
+  number_at_card: String
+  document_total: Int
+  comments: String
+  document_status: String
+  purchases_orders_lines: [SapPurchasesOrdersLines]
+}
+type SapPurchasesOrdersQuotesById {
+  id: Int!
+  business_partner_id: Int
+  business_partner: SapBusinessPartner
+  document_date: String
+  document_due_date: String
+  number_at_card: String
+  document_total: Int
+  comments: String
+  document_status: String
+  purchases_orders_lines: [SapPurchasesOrdersLines]
+}
+type SapPurchasesOrdersQuotesRowsCount {
+  rows: [SapPurchasesOrdersQuotes!]!
+  count: Int
+}
+input providerData {
+  cardCode: String
+  cardName: String
+}
+type Mutation {
+  createSchedule(inputSchedule: schedulesInput!): Boolean
+}
+type Query {
+  getSchedule: [Schedule]!
+
+  getSapPurchasesOrdersQuotes(
+    limit: Int
+    offset: Int
+  ): SapPurchasesOrdersQuotesRowsCount
+  getSapPurchasesOrdersQuotesById(
+    idPurcharseOrder: Int
+  ): SapPurchasesOrdersQuotesById!
+}

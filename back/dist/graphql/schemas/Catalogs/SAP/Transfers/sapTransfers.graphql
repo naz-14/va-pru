@@ -1,0 +1,136 @@
+type transfersRequestCatalog {
+  id: Int
+  doc_date: String
+  doc_due_date: String
+  num_at_card: String
+  doc_total: Int
+  comments: String
+  status: Int
+  doc_entry: Int
+  series: Int
+  series_name: String
+  price_list: String
+  disc_prcnt: Int
+  from_whs_code: String
+  warehouse_origin_name: warehouseOriginName
+  to_whs_code: String
+  warehouse_destiny_name: warehouseDestinyName
+}
+
+input transferRequestInput {
+  id: Int
+  doc_date: String
+  doc_due_date: String
+  num_at_card: String
+  doc_total: Int
+  comments: String
+  status: Int
+  doc_entry: Int
+  series: Int
+  series_name: String
+  price_list: String
+  disc_prcnt: Int
+  from_whs_code: String
+  to_whs_code: String
+  products: [inputTransfersProducts]
+}
+
+input inputTransfersProducts {
+  id: Int
+  inventory_transfer_id: Int
+  line_num: Int
+  item_code: String
+  target_type: String
+  doc_entry: String
+  target_entry: String
+  line_status: String
+  quantity: Int
+  open_quantity: Int
+  price: Int
+  disc_prcnt: Int
+  line_total: Int
+  tax_code: String
+  whs_code: String
+  ieps: Int
+  iva: Int
+  total: Int
+}
+
+type transfersProducts {
+  id: Int
+  inventory_transfer_id: Int
+  line_num: Int
+  item_code: String
+  name_product: nameProduct
+  target_type: String
+  doc_entry: String
+  target_entry: String
+  line_status: String
+  quantity: Int
+  open_quantity: Int
+  price: Int
+  disc_prcnt: Int
+  line_total: Int
+  tax_code: String
+  whs_code: String
+  ieps: Int
+  iva: Int
+  total: Int
+}
+
+type nameProduct {
+  item_code: String
+  item_name: String
+}
+
+type returnTransferRequest {
+  id: Int
+  doc_date: String
+  doc_due_date: String
+  num_at_card: String
+  doc_total: Int
+  comments: String
+  status: Int
+  doc_entry: Int
+  series: Int
+  series_name: String
+  price_list: String
+  disc_prcnt: Int
+  from_whs_code: String
+  warehouse_origin_name: warehouseOriginName
+  to_whs_code: String
+  warehouse_destiny_name: warehouseDestinyName
+  products: [transfersProducts]
+}
+
+type warehouseOriginName {
+  id: Int
+  warehouse_name: String
+}
+
+type warehouseDestinyName {
+  id: Int
+  warehouse_name: String
+}
+
+type transferRequestRowsCount {
+  rows: [transfersRequestCatalog]!
+  count: Int
+}
+
+type Query {
+  getAllTransferRequest(
+    searchQuery: String
+    limit: Int
+    offset: Int
+  ): transferRequestRowsCount
+  getOneTransferRequest(id: Int!): returnTransferRequest
+}
+
+type Mutation {
+  createTransferRequest(
+    inputTransferRequest: transferRequestInput!
+    inputProducts: [inputTransfersProducts]!
+  ): Boolean
+  getAllTransferRequestExport: [returnTransferRequest]
+}

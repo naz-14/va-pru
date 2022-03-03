@@ -1,0 +1,19 @@
+type Query {
+    getBillingOrders(
+        searchQuery: String
+        limit: Int
+        offset: Int
+        platform: Int
+    ): OrderRowsCount
+}
+
+type Mutation {
+    changeToBilling(
+        order_id: Int!
+        shipping_company_id: Int!
+        uploadReceipt: Upload!
+    ): Order
+    billingProcess(
+        order_id: Int!
+    ): Boolean!
+}
