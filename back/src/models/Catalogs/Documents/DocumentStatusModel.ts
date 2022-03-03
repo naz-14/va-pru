@@ -8,10 +8,7 @@ interface DocumentStatusAttributes {
 }
 
 interface DocumentStatusCreationAttributes
-  extends Optional<
-    DocumentStatusAttributes,
-    | 'id'
-  > {}
+  extends Optional<DocumentStatusAttributes, 'id'> {}
 
 class DocumentStatus
   extends Model<DocumentStatusAttributes, DocumentStatusCreationAttributes>
@@ -26,18 +23,18 @@ class DocumentStatus
 DocumentStatus.init(
   {
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        autoIncrement: true,
-        primaryKey: true,
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     is_active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {

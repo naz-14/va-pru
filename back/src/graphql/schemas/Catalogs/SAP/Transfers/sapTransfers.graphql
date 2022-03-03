@@ -12,7 +12,9 @@ type transfersRequestCatalog {
   price_list: String
   disc_prcnt: Int
   from_whs_code: String
+  warehouse_origin_name: warehouseOriginName
   to_whs_code: String
+  warehouse_destiny_name: warehouseDestinyName
 }
 
 input transferRequestInput {
@@ -59,6 +61,7 @@ type transfersProducts {
   inventory_transfer_id: Int
   line_num: Int
   item_code: String
+  name_product: nameProduct
   target_type: String
   doc_entry: String
   target_entry: String
@@ -75,6 +78,11 @@ type transfersProducts {
   total: Int
 }
 
+type nameProduct {
+  item_code: String
+  item_name: String
+}
+
 type returnTransferRequest {
   id: Int
   doc_date: String
@@ -89,8 +97,20 @@ type returnTransferRequest {
   price_list: String
   disc_prcnt: Int
   from_whs_code: String
+  warehouse_origin_name: warehouseOriginName
   to_whs_code: String
+  warehouse_destiny_name: warehouseDestinyName
   products: [transfersProducts]
+}
+
+type warehouseOriginName {
+  id: Int
+  warehouse_name: String
+}
+
+type warehouseDestinyName {
+  id: Int
+  warehouse_name: String
 }
 
 type transferRequestRowsCount {
@@ -104,13 +124,13 @@ type Query {
     limit: Int
     offset: Int
   ): transferRequestRowsCount
-  getOneTransferRequest(id: Int!): transfersRequestCatalog
+  getOneTransferRequest(id: Int!): returnTransferRequest
 }
 
 type Mutation {
   createTransferRequest(
     inputTransferRequest: transferRequestInput!
     inputProducts: [inputTransfersProducts]!
-  ): returnTransferRequest
+  ): Boolean
   getAllTransferRequestExport: [returnTransferRequest]
 }

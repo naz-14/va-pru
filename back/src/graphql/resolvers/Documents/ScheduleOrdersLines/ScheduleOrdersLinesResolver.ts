@@ -23,6 +23,18 @@ const ScheduleOrdersLinesResolver: Resolvers = {
       // }
       return await ScheduleOrdersLines.findAll(clause)
     },
+    getScheduleOrdersLinesByScheduleId: async (_, {}) => {
+      const clause: any = {
+        where: {
+          is_active: 1,
+        },
+      }
+      // if (limit !== null && offset !== null) {
+      //   clause.offset = offset
+      //   clause.limit = limit
+      // }
+      return await ScheduleOrdersLines.findAll(clause)
+    },
   },
   Mutation:{
     getScheduleOrdersLinesByScheduleId: async (_, {scheduleId}) => {
@@ -62,12 +74,14 @@ const ScheduleOrdersLinesResolver: Resolvers = {
       })
     },
     schedule:async ({ schedule_id }) => {
-      return await Schedule.findOne({
+      const res = await Schedule.findOne({
         where: {
           id: schedule_id,
           is_active:1,
         },
       })
+      if(res) return res
+      else return null as any
     },
   },
 }

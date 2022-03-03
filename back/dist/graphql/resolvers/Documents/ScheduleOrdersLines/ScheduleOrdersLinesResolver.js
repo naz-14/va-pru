@@ -33,6 +33,18 @@ const ScheduleOrdersLinesResolver = {
             // }
             return yield ScheduleOrdersLinesModel_1.default.findAll(clause);
         }),
+        getScheduleOrdersLinesByScheduleId: (_, {}) => __awaiter(void 0, void 0, void 0, function* () {
+            const clause = {
+                where: {
+                    is_active: 1,
+                },
+            };
+            // if (limit !== null && offset !== null) {
+            //   clause.offset = offset
+            //   clause.limit = limit
+            // }
+            return yield ScheduleOrdersLinesModel_1.default.findAll(clause);
+        }),
     },
     Mutation: {
         getScheduleOrdersLinesByScheduleId: (_, { scheduleId }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,12 +83,16 @@ const ScheduleOrdersLinesResolver = {
             });
         }),
         schedule: ({ schedule_id }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield ScheduleModel_1.default.findOne({
+            const res = yield ScheduleModel_1.default.findOne({
                 where: {
                     id: schedule_id,
                     is_active: 1,
                 },
             });
+            if (res)
+                return res;
+            else
+                return null;
         }),
     },
 };

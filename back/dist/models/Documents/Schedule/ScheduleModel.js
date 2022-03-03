@@ -13,10 +13,6 @@ Schedule.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    dock_id: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false,
-    },
     document_date: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,

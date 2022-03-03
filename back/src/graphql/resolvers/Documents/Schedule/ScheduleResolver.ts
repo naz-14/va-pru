@@ -11,12 +11,14 @@ import Docks from '../../../../models/Catalogs/Docks/DocksModel'
 import SapWarehouses from '../../../../models/Catalogs/SAP/Warehouses/SapWarehousesModel'
 import Schedule from '../../../../models/Documents/Schedule/ScheduleModel'
 import ScheduleOrdersLines from '../../../../models/Documents/ScheduleOrdersLines/ScheduleOrdersLinesModel'
+import ScheduleDocks from '../../../../models/Documents/ScheduleDocks/ScheduleDocksModel'
 
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos'
 const orderNotFound = 'No se encontro esta orden o ha cambiado de estatus'
+const schedulNotFound = 'No se encontro esta cita o ha cambiado de estatus'
 const ScheduleResolver: Resolvers = {
   Query: {
-    getQuotes: async (_, {}) => {
+    getSchedule: async (_, {}) => {
       const clause: any = {
         where: {
           is_active: 1,
@@ -52,7 +54,7 @@ const ScheduleResolver: Resolvers = {
     createSchedule: async (_, { inputSchedule }) => {
       const transaction = await sequelize.transaction()
       const {
-        dock_id,
+        dock_ids,
         document_date,
         document_time_start,
         document_time_end,
@@ -67,7 +69,6 @@ const ScheduleResolver: Resolvers = {
         /* CREATE NEW SCHEDULE */
         const scheduleCreated = await Schedule.create(
           {
-            dock_id,
             document_date,
             document_time_start,
             document_time_end,
@@ -91,6 +92,17 @@ const ScheduleResolver: Resolvers = {
             { transaction }
           )
         }
+        /* CREATE DOCUMENT SCHEDULS DOCKS */
+        for(const dock of dock_ids){
+          await ScheduleDocks.create(
+            {
+              schedule_id:scheduleCreated.id,
+              dock_id: dock.value,
+              is_active: true,
+            },
+            { transaction }
+          )
+        }
 
         await transaction.commit()
         return true
@@ -99,40 +111,16 @@ const ScheduleResolver: Resolvers = {
         return Promise.reject(Error(defaultError))
       }
     },
-    getInfoProvider: async (_, { inputProvider }) => {
-      //API SAP
-      const { cardCode, cardName } = inputProvider
-      try {
-        const data = [
-          {
-            name: 'getProvider',
-            key: '4040203090',
-            values: {
-              cardCode: cardCode,
-              cardName: cardName,
-            },
-          },
-        ]
-        const providerInfo = await ApiSapReceiver(data)
-        if (!providerInfo) return Promise.reject(Error(defaultError))
-        return providerInfo as any
-      } catch (error: any) {
-        return Promise.reject(Error(error.message))
-      }
-    },
   },
-  quotesData: {
+  Schedule: {
     status: async ({ document_status_id }) => {
       return await OrderStatus.findOne({ where: { id: document_status_id } })
-    },
-    dock: async ({ dock_id }) => {
-      return await Docks.findOne({ where: { id: dock_id } })
     },
     warehouse: async ({ warehouse_code }) => {
       return await SapWarehouses.findOne({ where: { warehouse_code: warehouse_code } })
     },
-    document_schedule_orders_lines: async ({ id }) => {
-      return await ScheduleOrdersLines.findOne({ where: { schedule_id: id } })
+    scheduleLines: async ({ id }) => {
+      return await ScheduleOrdersLines.findAll({ where: { schedule_id: id } })
     },
   },
   SapPurchasesOrdersQuotes: {

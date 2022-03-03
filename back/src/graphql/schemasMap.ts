@@ -40,7 +40,7 @@ import * as PickingOrdersTypeDefs from './schemas/Catalogs/Orders/pickingOrders.
 import * as PackingOrdersTypeDefs from './schemas/Catalogs/Orders/packingOrders.graphql'
 import * as AppOrdersWarehouseTypeDefs from './schemas/App/Catalogs/OrdersWarehouse/OrdersWarehouse.graphql'
 import * as ReasonsTypeDefs from './schemas/Catalogs/Reasons/reasons.graphql'
-import * as DocumentStatusTypeDefs from './schemas/Catalogs/Documents/documentStatus.graphql'
+import * as DocumentStatusTypeDefs from './schemas/Documents/Status/status.graphql'
 import * as SapListPricesItemsTypeDefs from './schemas/Catalogs/SAP/ListPricesItems/sapListPricesItems.graphql'
 import * as SapListPricesTypeDefs from './schemas/Catalogs/SAP/ListPrices/sapListPrices.graphql'
 import * as SapItemsTypeDefs from './schemas/Catalogs/SAP/Items/sapItems.graphql'
@@ -57,6 +57,8 @@ import * as ScheduleTypeDefs from './schemas/Documents/Schedule/schedule.graphql
 import * as ScheduleOrdersLinesTypeDefs from './schemas/Documents/ScheduleOrdersLines/scheduleOrdersLines.graphql'
 import * as DocksTypeDefs from './schemas/Catalogs/Docks/docks.graphql'
 import * as CommodityReceiptTypeDefs from './schemas/Documents/CommodityReceipt/commodityReceipt.graphql'
+import * as ScheduleDocksTypeDefs from './schemas/Documents/ScheduleDocks/scheduleDocks.graphql'
+
 import { makeExecutableSchema } from 'graphql-tools'
 import resolversMap from './resolversMap'
 import { GraphQLSchema } from 'graphql'
@@ -121,6 +123,7 @@ const schema: GraphQLSchema = makeExecutableSchema({
     ScheduleOrdersLinesTypeDefs,
     DocksTypeDefs,
     CommodityReceiptTypeDefs,
+    ScheduleDocksTypeDefs,
   ],
   resolvers: resolversMap,
 })

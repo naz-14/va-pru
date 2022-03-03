@@ -32,7 +32,7 @@ import PickingOrdersResolver from './resolvers/Catalogs/Orders/pickingOrders'
 import PackingOrdersResolver from './resolvers/Catalogs/Orders/packingOrders'
 import OrdersWarehouseResolver from './resolvers/App/Catalogs/OrdersWarehouse/OrdersWarehouse'
 import ReasonsResolver from './resolvers/Catalogs/Reasons/ReasonsResolver'
-import DocumentStatusResolver from './resolvers/Catalogs/Documents/DocumentStatusResolver'
+import StatusResolver from './resolvers/Documents/Status/StatusResolver'
 import SapListPricesItemsResolver from './resolvers/Catalogs/SAP/ListPricesItems/SapListPricesItemsResolver'
 import SapListPricesResolver from './resolvers/Catalogs/SAP/ListPrices/SapListPricesResolver'
 import SapItemsResolver from './resolvers/Catalogs/SAP/Items/SapItemsResolver'
@@ -49,6 +49,7 @@ import ScheduleOrdersLinesResolver from './resolvers/Documents/ScheduleOrdersLin
 import ScheduleResolver from './resolvers/Documents/Schedule/ScheduleResolver'
 import DocksResolver from './resolvers/Catalogs/Docks/DocksResolver'
 import CommodityReceiptResolver from './resolvers/Documents/CommodityReceipt/CommodityReceipt'
+import ScheduleDocksResolver from './resolvers/Documents/ScheduleDocks/ScheduleDocksResolver'
 
 const resolversMap: Resolvers = merge([
   UserResolver,
@@ -83,7 +84,7 @@ const resolversMap: Resolvers = merge([
   PackingOrdersResolver,
   OrdersWarehouseResolver,
   ReasonsResolver,
-  DocumentStatusResolver,
+  StatusResolver,
   SapListPricesItemsResolver,
   SapListPricesResolver,
   SapItemsResolver,
@@ -100,6 +101,7 @@ const resolversMap: Resolvers = merge([
   ScheduleOrdersLinesResolver,
   DocksResolver,
   CommodityReceiptResolver,
+  ScheduleDocksResolver,
 ])
 
 export default resolversMap

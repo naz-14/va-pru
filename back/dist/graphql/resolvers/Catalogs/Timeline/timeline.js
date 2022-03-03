@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const OrderStatusModel_1 = __importDefault(require("../../../../models/Catalogs/Orders/OrderStatusModel"));
 const TimelineModel_1 = __importDefault(require("../../../../models/Catalogs/Timeline/TimelineModel"));
+const AppUser_1 = __importDefault(require("../../../../models/Users/AppUser"));
 const UserModel_1 = __importDefault(require("../../../../models/Users/UserModel"));
 const timelineResolver = {
     Query: {
@@ -21,9 +22,9 @@ const timelineResolver = {
             const clause = {
                 where: {
                     is_active: true,
-                    order_id: id
+                    order_id: id,
                 },
-                order: [['dateStatus', 'ASC']]
+                order: [['dateStatus', 'ASC']],
             };
             return yield TimelineModel_1.default.findAll(clause);
         }),
@@ -32,9 +33,12 @@ const timelineResolver = {
         status: ({ status_id }) => __awaiter(void 0, void 0, void 0, function* () {
             return yield OrderStatusModel_1.default.findOne({ where: { id: status_id } });
         }),
-        user: ({ user_id }) => __awaiter(void 0, void 0, void 0, function* () {
+        user: ({ user_id, status_id }) => __awaiter(void 0, void 0, void 0, function* () {
+            if (status_id === 1 || status_id === 8) {
+                return yield AppUser_1.default.findOne({ where: { id: user_id } });
+            }
             return yield UserModel_1.default.findOne({ where: { id: user_id } });
         }),
-    }
+    },
 };
 exports.default = timelineResolver;

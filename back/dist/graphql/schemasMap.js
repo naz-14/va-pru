@@ -64,7 +64,7 @@ const PickingOrdersTypeDefs = __importStar(require("./schemas/Catalogs/Orders/pi
 const PackingOrdersTypeDefs = __importStar(require("./schemas/Catalogs/Orders/packingOrders.graphql"));
 const AppOrdersWarehouseTypeDefs = __importStar(require("./schemas/App/Catalogs/OrdersWarehouse/OrdersWarehouse.graphql"));
 const ReasonsTypeDefs = __importStar(require("./schemas/Catalogs/Reasons/reasons.graphql"));
-const DocumentStatusTypeDefs = __importStar(require("./schemas/Catalogs/Documents/documentStatus.graphql"));
+const DocumentStatusTypeDefs = __importStar(require("./schemas/Documents/Status/status.graphql"));
 const SapListPricesItemsTypeDefs = __importStar(require("./schemas/Catalogs/SAP/ListPricesItems/sapListPricesItems.graphql"));
 const SapListPricesTypeDefs = __importStar(require("./schemas/Catalogs/SAP/ListPrices/sapListPrices.graphql"));
 const SapItemsTypeDefs = __importStar(require("./schemas/Catalogs/SAP/Items/sapItems.graphql"));
@@ -81,6 +81,7 @@ const ScheduleTypeDefs = __importStar(require("./schemas/Documents/Schedule/sche
 const ScheduleOrdersLinesTypeDefs = __importStar(require("./schemas/Documents/ScheduleOrdersLines/scheduleOrdersLines.graphql"));
 const DocksTypeDefs = __importStar(require("./schemas/Catalogs/Docks/docks.graphql"));
 const CommodityReceiptTypeDefs = __importStar(require("./schemas/Documents/CommodityReceipt/commodityReceipt.graphql"));
+const ScheduleDocksTypeDefs = __importStar(require("./schemas/Documents/ScheduleDocks/scheduleDocks.graphql"));
 const graphql_tools_1 = require("graphql-tools");
 const resolversMap_1 = __importDefault(require("./resolversMap"));
 const schema = (0, graphql_tools_1.makeExecutableSchema)({
@@ -143,6 +144,7 @@ const schema = (0, graphql_tools_1.makeExecutableSchema)({
         ScheduleOrdersLinesTypeDefs,
         DocksTypeDefs,
         CommodityReceiptTypeDefs,
+        ScheduleDocksTypeDefs,
     ],
     resolvers: resolversMap_1.default,
 });

@@ -1,7 +1,7 @@
 type commodityReceipt {
     id: Int!
     schedule_id: Int
-    schedules: quotesData
+    schedules: Schedule
     purchases_orders_id: Int
     purchases_orders: SapPurchasesOrders
     purchases_orders_lines_id: Int

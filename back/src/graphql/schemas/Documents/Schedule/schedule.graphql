@@ -1,5 +1,5 @@
 input schedulesInput {
-  dock_id: Int!
+  dock_ids: [DocksData!]!
   document_date: String!
   document_time_start: String!
   document_time_end: String!
@@ -13,11 +13,13 @@ input OrdersReceivedData{
   purcharse_order_id:Int!,
   id_order:Int!,
 }
+input DocksData{
+  label:String!,
+  value:Int!
+}
 
-type quotesData {
+type Schedule {
   id: Int!
-  dock_id: Int!
-  dock: Dock
   document_date: String!
   document_time_start: String!
   document_time_end: String!
@@ -26,9 +28,8 @@ type quotesData {
   warehouse: SapWarehouses
   document_status_id: Int!
   status: Status
-  document_schedule_orders_lines:QuotesOrdersLines
+  scheduleLines:[QuotesOrdersLines]
 }
-
 #RES OF SAP
 type Provider {
   name: String
@@ -67,7 +68,6 @@ type OpenOrders {
   numAtCard: Int
   docTotal: Float
 }
-
 type SapPurchasesOrdersQuotes {
   id: Int!
   business_partner_id: Int
@@ -92,30 +92,24 @@ type SapPurchasesOrdersQuotesById {
   document_status: String
   purchases_orders_lines: [SapPurchasesOrdersLines]
 }
-
 type SapPurchasesOrdersQuotesRowsCount {
   rows: [SapPurchasesOrdersQuotes!]!
   count: Int
 }
-
 input providerData {
   cardCode: String
   cardName: String
 }
-
 type Mutation {
   createSchedule(inputSchedule: schedulesInput!): Boolean
-  getInfoProvider(inputProvider: providerData!): [Provider!]!
 }
-
 type Query {
-  getQuotes: [quotesData!]!
+  getSchedule: [Schedule]!
 
   getSapPurchasesOrdersQuotes(
     limit: Int
     offset: Int
   ): SapPurchasesOrdersQuotesRowsCount
-
   getSapPurchasesOrdersQuotesById(
     idPurcharseOrder: Int
   ): SapPurchasesOrdersQuotesById!

@@ -12,7 +12,11 @@ const SapProducts: Resolvers = {
       let list = [] as any
 
       const clause: any = {
-        where: { warehouse_code: warehouseCode, locked: 'N' },
+        where: {
+          warehouse_code: warehouseCode,
+          locked: 'N',
+          on_hand: { [Op.gt]: 0 },
+        },
         include: [
           {
             model: SapItems,

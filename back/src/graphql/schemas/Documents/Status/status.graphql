@@ -1,0 +1,8 @@
+type DocumentStatus{
+  id: Int!
+  name: String!
+}
+
+type Query{
+    getDocumentStatus:[DocumentStatus!]!
+}

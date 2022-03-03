@@ -14,19 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = __importDefault(require("../../../../db/connection"));
 const OrderStatusModel_1 = __importDefault(require("../../../../models/Catalogs/Orders/OrderStatusModel"));
-const ApiSapReceiver_1 = require("../../../../helpers/ApiSapReceiver");
 const SapPurchasesOrdersModel_1 = __importDefault(require("../../../../models/Catalogs/SAP/PurchasesOrders/SapPurchasesOrdersModel"));
 const SapBusinessPartnerModel_1 = __importDefault(require("../../../../models/Catalogs/SAP/BusinessPartner/SapBusinessPartnerModel"));
 const SapPurchasesOrdersLinesModel_1 = __importDefault(require("../../../../models/Catalogs/SAP/PurchasesOrdersLines/SapPurchasesOrdersLinesModel"));
-const DocksModel_1 = __importDefault(require("../../../../models/Catalogs/Docks/DocksModel"));
 const SapWarehousesModel_1 = __importDefault(require("../../../../models/Catalogs/SAP/Warehouses/SapWarehousesModel"));
 const ScheduleModel_1 = __importDefault(require("../../../../models/Documents/Schedule/ScheduleModel"));
 const ScheduleOrdersLinesModel_1 = __importDefault(require("../../../../models/Documents/ScheduleOrdersLines/ScheduleOrdersLinesModel"));
+const ScheduleDocksModel_1 = __importDefault(require("../../../../models/Documents/ScheduleDocks/ScheduleDocksModel"));
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos';
 const orderNotFound = 'No se encontro esta orden o ha cambiado de estatus';
+const schedulNotFound = 'No se encontro esta cita o ha cambiado de estatus';
 const ScheduleResolver = {
     Query: {
-        getQuotes: (_, {}) => __awaiter(void 0, void 0, void 0, function* () {
+        getSchedule: (_, {}) => __awaiter(void 0, void 0, void 0, function* () {
             const clause = {
                 where: {
                     is_active: 1,
@@ -63,11 +63,10 @@ const ScheduleResolver = {
     Mutation: {
         createSchedule: (_, { inputSchedule }) => __awaiter(void 0, void 0, void 0, function* () {
             const transaction = yield connection_1.default.transaction();
-            const { dock_id, document_date, document_time_start, document_time_end, comments, warehouse_code, document_status_id, ordersReceived, provider_id, } = inputSchedule;
+            const { dock_ids, document_date, document_time_start, document_time_end, comments, warehouse_code, document_status_id, ordersReceived, provider_id, } = inputSchedule;
             try {
                 /* CREATE NEW SCHEDULE */
                 const scheduleCreated = yield ScheduleModel_1.default.create({
-                    dock_id,
                     document_date,
                     document_time_start,
                     document_time_end,
@@ -86,6 +85,14 @@ const ScheduleResolver = {
                         is_active: true,
                     }, { transaction });
                 }
+                /* CREATE DOCUMENT SCHEDULS DOCKS */
+                for (const dock of dock_ids) {
+                    yield ScheduleDocksModel_1.default.create({
+                        schedule_id: scheduleCreated.id,
+                        dock_id: dock.value,
+                        is_active: true,
+                    }, { transaction });
+                }
                 yield transaction.commit();
                 return true;
             }
@@ -94,42 +101,16 @@ const ScheduleResolver = {
                 return Promise.reject(Error(defaultError));
             }
         }),
-        getInfoProvider: (_, { inputProvider }) => __awaiter(void 0, void 0, void 0, function* () {
-            //API SAP
-            const { cardCode, cardName } = inputProvider;
-            try {
-                const data = [
-                    {
-                        name: 'getProvider',
-                        key: '4040203090',
-                        values: {
-                            cardCode: cardCode,
-                            cardName: cardName,
-                        },
-                    },
-                ];
-                const providerInfo = yield (0, ApiSapReceiver_1.ApiSapReceiver)(data);
-                if (!providerInfo)
-                    return Promise.reject(Error(defaultError));
-                return providerInfo;
-            }
-            catch (error) {
-                return Promise.reject(Error(error.message));
-            }
-        }),
     },
-    quotesData: {
+    Schedule: {
         status: ({ document_status_id }) => __awaiter(void 0, void 0, void 0, function* () {
             return yield OrderStatusModel_1.default.findOne({ where: { id: document_status_id } });
-        }),
-        dock: ({ dock_id }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield DocksModel_1.default.findOne({ where: { id: dock_id } });
         }),
         warehouse: ({ warehouse_code }) => __awaiter(void 0, void 0, void 0, function* () {
             return yield SapWarehousesModel_1.default.findOne({ where: { warehouse_code: warehouse_code } });
         }),
-        document_schedule_orders_lines: ({ id }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield ScheduleOrdersLinesModel_1.default.findOne({ where: { schedule_id: id } });
+        scheduleLines: ({ id }) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield ScheduleOrdersLinesModel_1.default.findAll({ where: { schedule_id: id } });
         }),
     },
     SapPurchasesOrdersQuotes: {

@@ -77,8 +77,13 @@ export type Dock = {
   name?: Maybe<Scalars['String']>;
 };
 
-export type DocumentsStatuses = {
-  __typename?: 'DocumentsStatuses';
+export type DocksData = {
+  label: Scalars['String'];
+  value: Scalars['Int'];
+};
+
+export type DocumentStatus = {
+  __typename?: 'DocumentStatus';
   id: Scalars['Int'];
   name: Scalars['String'];
 };
@@ -169,7 +174,7 @@ export type Mutation = {
   createRole: ReturnRole;
   createSchedule?: Maybe<Scalars['Boolean']>;
   createSulogDoc: Array<Maybe<SulogDoc>>;
-  createTransferRequest?: Maybe<ReturnTransferRequest>;
+  createTransferRequest?: Maybe<Scalars['Boolean']>;
   createUserPermission: Scalars['Boolean'];
   decryptToken: TokenDecrypted;
   decryptTokenApp: TokenDecryptedApp;
@@ -193,12 +198,12 @@ export type Mutation = {
   getAllUserPermissions: Array<UserModule>;
   getAllUsersExport?: Maybe<Array<Maybe<User>>>;
   getFullAddressByZipcode: GetFullAddressCatalog;
-  getInfoProvider: Array<Provider>;
   getProductSap?: Maybe<Array<Maybe<Products>>>;
   getQuotesOrdersLinesById: Array<Maybe<QuotesOrdersLines>>;
   getSapBusinessPartnerSellerById?: Maybe<SapBusinessPartner>;
   getSapPurchasesOrdersByProvider?: Maybe<SapPurchasesOrdersByProviderRowsCount>;
   getSapPurchasesOrdersLinesByPurchaseOrdersId: Array<Maybe<SapPurchasesOrdersLines>>;
+  getScheduleDocksByScheduleId: Array<Maybe<ScheduleDocks>>;
   getScheduleOrdersLinesByScheduleId: Array<Maybe<QuotesOrdersLines>>;
   getUser: User;
   isOrderOpen: Scalars['Boolean'];
@@ -442,11 +447,6 @@ export type MutationGetFullAddressByZipcodeArgs = {
 };
 
 
-export type MutationGetInfoProviderArgs = {
-  inputProvider: ProviderData;
-};
-
-
 export type MutationGetProductSapArgs = {
   searchQuery: Scalars['String'];
   warehouseCode: Scalars['String'];
@@ -472,6 +472,11 @@ export type MutationGetSapPurchasesOrdersByProviderArgs = {
 
 export type MutationGetSapPurchasesOrdersLinesByPurchaseOrdersIdArgs = {
   purchasesOrdersId?: Maybe<Array<Maybe<Scalars['Int']>>>;
+};
+
+
+export type MutationGetScheduleDocksByScheduleIdArgs = {
+  scheduleId: Scalars['Int'];
 };
 
 
@@ -829,7 +834,7 @@ export type Query = {
   getCommodityReceiptByScheduleId: Array<Maybe<CommodityReceipt>>;
   getConfigSys: ConfigSys;
   getDocks: Array<Maybe<Dock>>;
-  getDocumentsStatuses: Array<DocumentsStatuses>;
+  getDocumentStatus: Array<DocumentStatus>;
   getInProcessOrders?: Maybe<OrderRowsCount>;
   getInRouteOrders?: Maybe<OrderRowsCount>;
   getInternalNotes: Array<InternalNotes>;
@@ -840,15 +845,13 @@ export type Query = {
   getOneRole?: Maybe<RolesCatalog>;
   getOneStore?: Maybe<StoresCatalog>;
   getOneSulogDoc?: Maybe<SulogDoc>;
-  getOneTransferRequest?: Maybe<TransfersRequestCatalog>;
+  getOneTransferRequest?: Maybe<ReturnTransferRequest>;
   getOrderById?: Maybe<Order>;
   getOrderByIdAndStatus?: Maybe<Order>;
   getPackingOrders?: Maybe<OrderRowsCount>;
   getPendingOrders?: Maybe<OrderRowsCount>;
   getPickingOrders?: Maybe<OrderRowsCount>;
-  getQuotes: Array<QuotesData>;
   getQuotesOrdersLines: Array<Maybe<QuotesOrdersLines>>;
-  getQuotesOrdersLinesByQuotesId: Array<Maybe<QuotesOrdersLines>>;
   getReason: Array<ReasonsData>;
   getRejectedOrders?: Maybe<OrderRowsCount>;
   getSapBusinessPartner?: Maybe<SapBusinessPartnerRowsCount>;
@@ -862,6 +865,8 @@ export type Query = {
   getSapPurchasesOrdersQuotes?: Maybe<SapPurchasesOrdersQuotesRowsCount>;
   getSapPurchasesOrdersQuotesById: SapPurchasesOrdersQuotesById;
   getSapWarehouses: Array<SapWarehouses>;
+  getSchedule: Array<Maybe<Schedule>>;
+  getScheduleOrdersLinesByScheduleId: Array<Maybe<QuotesOrdersLines>>;
   getShippedOrders?: Maybe<OrderRowsCount>;
   getTimeline?: Maybe<Array<Maybe<Timeline>>>;
   getToStockOrders?: Maybe<OrderRowsCount>;
@@ -1059,11 +1064,6 @@ export type QueryGetPickingOrdersArgs = {
 };
 
 
-export type QueryGetQuotesOrdersLinesByQuotesIdArgs = {
-  quotesId?: Maybe<Scalars['Int']>;
-};
-
-
 export type QueryGetReasonArgs = {
   orderId: Scalars['Int'];
 };
@@ -1142,6 +1142,11 @@ export type QueryGetSapWarehousesArgs = {
 };
 
 
+export type QueryGetScheduleOrdersLinesByScheduleIdArgs = {
+  scheduleId?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryGetShippedOrdersArgs = {
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
@@ -1171,8 +1176,8 @@ export type QuotesOrdersLines = {
   purchases_orders_lines?: Maybe<SapPurchasesOrdersLines>;
   sap_purchases_orders_id?: Maybe<Scalars['Int']>;
   sap_purchases_orders_lines_id?: Maybe<Scalars['Int']>;
-  schedule?: Maybe<QuotesData>;
-  schedule_id?: Maybe<Scalars['Int']>;
+  schedule?: Maybe<Schedule>;
+  schedule_id: Scalars['Int'];
 };
 
 export type Reason = {
@@ -1409,6 +1414,28 @@ export type SapWarehouses = {
   id: Scalars['Int'];
   warehouse_code?: Maybe<Scalars['String']>;
   warehouse_name?: Maybe<Scalars['String']>;
+};
+
+export type Schedule = {
+  __typename?: 'Schedule';
+  comments?: Maybe<Scalars['String']>;
+  document_date: Scalars['String'];
+  document_status_id: Scalars['Int'];
+  document_time_end: Scalars['String'];
+  document_time_start: Scalars['String'];
+  id: Scalars['Int'];
+  scheduleLines?: Maybe<Array<Maybe<QuotesOrdersLines>>>;
+  status?: Maybe<Status>;
+  warehouse?: Maybe<SapWarehouses>;
+  warehouse_code: Scalars['String'];
+};
+
+export type ScheduleDocks = {
+  __typename?: 'ScheduleDocks';
+  dock?: Maybe<Dock>;
+  dock_id: Scalars['Int'];
+  id: Scalars['Int'];
+  schedule_id: Scalars['Int'];
 };
 
 export type Shipping = {
@@ -1662,7 +1689,7 @@ export type CommodityReceipt = {
   purchases_orders_lines_id?: Maybe<Scalars['Int']>;
   receipt_quantity?: Maybe<Scalars['Int']>;
   schedule_id?: Maybe<Scalars['Int']>;
-  schedules?: Maybe<QuotesData>;
+  schedules?: Maybe<Schedule>;
 };
 
 export type CommodityReceiptInput = {
@@ -1835,6 +1862,12 @@ export type MunicipalitiesCatalogSepomex = {
   name: Scalars['String'];
 };
 
+export type NameProduct = {
+  __typename?: 'nameProduct';
+  item_code?: Maybe<Scalars['String']>;
+  item_name?: Maybe<Scalars['String']>;
+};
+
 export type NewPickingResponse = {
   __typename?: 'newPickingResponse';
   order?: Maybe<Order>;
@@ -1861,22 +1894,6 @@ export type PlatformCatalog = {
 export type ProviderData = {
   cardCode?: Maybe<Scalars['String']>;
   cardName?: Maybe<Scalars['String']>;
-};
-
-export type QuotesData = {
-  __typename?: 'quotesData';
-  comments?: Maybe<Scalars['String']>;
-  dock?: Maybe<Dock>;
-  dock_id: Scalars['Int'];
-  document_date: Scalars['String'];
-  document_schedule_orders_lines?: Maybe<QuotesOrdersLines>;
-  document_status_id: Scalars['Int'];
-  document_time_end: Scalars['String'];
-  document_time_start: Scalars['String'];
-  id: Scalars['Int'];
-  status?: Maybe<Status>;
-  warehouse?: Maybe<SapWarehouses>;
-  warehouse_code: Scalars['String'];
 };
 
 export type ReasonData = {
@@ -1926,11 +1943,13 @@ export type ReturnTransferRequest = {
   series_name?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['Int']>;
   to_whs_code?: Maybe<Scalars['String']>;
+  warehouse_destiny_name?: Maybe<WarehouseDestinyName>;
+  warehouse_origin_name?: Maybe<WarehouseOriginName>;
 };
 
 export type SchedulesInput = {
   comments?: Maybe<Scalars['String']>;
-  dock_id: Scalars['Int'];
+  dock_ids: Array<DocksData>;
   document_date: Scalars['String'];
   document_status_id: Scalars['Int'];
   document_time_end: Scalars['String'];
@@ -2048,6 +2067,7 @@ export type TransfersProducts = {
   line_num?: Maybe<Scalars['Int']>;
   line_status?: Maybe<Scalars['String']>;
   line_total?: Maybe<Scalars['Int']>;
+  name_product?: Maybe<NameProduct>;
   open_quantity?: Maybe<Scalars['Int']>;
   price?: Maybe<Scalars['Int']>;
   quantity?: Maybe<Scalars['Int']>;
@@ -2074,6 +2094,8 @@ export type TransfersRequestCatalog = {
   series_name?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['Int']>;
   to_whs_code?: Maybe<Scalars['String']>;
+  warehouse_destiny_name?: Maybe<WarehouseDestinyName>;
+  warehouse_origin_name?: Maybe<WarehouseOriginName>;
 };
 
 export type TypeAvatar = {
@@ -2167,6 +2189,18 @@ export type UserRegisterInput = {
   user_name: Scalars['String'];
 };
 
+export type WarehouseDestinyName = {
+  __typename?: 'warehouseDestinyName';
+  id?: Maybe<Scalars['Int']>;
+  warehouse_name?: Maybe<Scalars['String']>;
+};
+
+export type WarehouseOriginName = {
+  __typename?: 'warehouseOriginName';
+  id?: Maybe<Scalars['Int']>;
+  warehouse_name?: Maybe<Scalars['String']>;
+};
+
 export type WoocommerceOrder = {
   __typename?: 'woocommerceOrder';
   id: Scalars['ID'];
@@ -2250,7 +2284,8 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   BusinessPartner: ResolverTypeWrapper<BusinessPartner>;
   Dock: ResolverTypeWrapper<Dock>;
-  DocumentsStatuses: ResolverTypeWrapper<DocumentsStatuses>;
+  DocksData: DocksData;
+  DocumentStatus: ResolverTypeWrapper<DocumentStatus>;
   FileUpload: ResolverTypeWrapper<FileUpload>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -2299,6 +2334,8 @@ export type ResolversTypes = {
   SapPurchasesOrdersQuotesRowsCount: ResolverTypeWrapper<SapPurchasesOrdersQuotesRowsCount>;
   SapPurchasesOrdersRowsCount: ResolverTypeWrapper<SapPurchasesOrdersRowsCount>;
   SapWarehouses: ResolverTypeWrapper<SapWarehouses>;
+  Schedule: ResolverTypeWrapper<Schedule>;
+  ScheduleDocks: ResolverTypeWrapper<ScheduleDocks>;
   Shipping: ResolverTypeWrapper<Shipping>;
   Status: ResolverTypeWrapper<Status>;
   Store: ResolverTypeWrapper<Store>;
@@ -2345,12 +2382,12 @@ export type ResolversTypes = {
   moduleInput: ModuleInput;
   municipalitiesCatalog: ResolverTypeWrapper<MunicipalitiesCatalog>;
   municipalitiesCatalogSepomex: ResolverTypeWrapper<MunicipalitiesCatalogSepomex>;
+  nameProduct: ResolverTypeWrapper<NameProduct>;
   newPickingResponse: ResolverTypeWrapper<NewPickingResponse>;
   passwordRecoveryInput: PasswordRecoveryInput;
   passwordUpdateInput: PasswordUpdateInput;
   platformCatalog: ResolverTypeWrapper<PlatformCatalog>;
   providerData: ProviderData;
-  quotesData: ResolverTypeWrapper<QuotesData>;
   reasonData: ReasonData;
   reasonsData: ResolverTypeWrapper<ReasonsData>;
   returnRole: ResolverTypeWrapper<ReturnRole>;
@@ -2379,6 +2416,8 @@ export type ResolversTypes = {
   userModule: ResolverTypeWrapper<UserModule>;
   userModuleInput: UserModuleInput;
   userRegisterInput: UserRegisterInput;
+  warehouseDestinyName: ResolverTypeWrapper<WarehouseDestinyName>;
+  warehouseOriginName: ResolverTypeWrapper<WarehouseOriginName>;
   woocommerceOrder: ResolverTypeWrapper<WoocommerceOrder>;
 };
 
@@ -2391,7 +2430,8 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   BusinessPartner: BusinessPartner;
   Dock: Dock;
-  DocumentsStatuses: DocumentsStatuses;
+  DocksData: DocksData;
+  DocumentStatus: DocumentStatus;
   FileUpload: FileUpload;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
@@ -2440,6 +2480,8 @@ export type ResolversParentTypes = {
   SapPurchasesOrdersQuotesRowsCount: SapPurchasesOrdersQuotesRowsCount;
   SapPurchasesOrdersRowsCount: SapPurchasesOrdersRowsCount;
   SapWarehouses: SapWarehouses;
+  Schedule: Schedule;
+  ScheduleDocks: ScheduleDocks;
   Shipping: Shipping;
   Status: Status;
   Store: Store;
@@ -2486,12 +2528,12 @@ export type ResolversParentTypes = {
   moduleInput: ModuleInput;
   municipalitiesCatalog: MunicipalitiesCatalog;
   municipalitiesCatalogSepomex: MunicipalitiesCatalogSepomex;
+  nameProduct: NameProduct;
   newPickingResponse: NewPickingResponse;
   passwordRecoveryInput: PasswordRecoveryInput;
   passwordUpdateInput: PasswordUpdateInput;
   platformCatalog: PlatformCatalog;
   providerData: ProviderData;
-  quotesData: QuotesData;
   reasonData: ReasonData;
   reasonsData: ReasonsData;
   returnRole: ReturnRole;
@@ -2520,6 +2562,8 @@ export type ResolversParentTypes = {
   userModule: UserModule;
   userModuleInput: UserModuleInput;
   userRegisterInput: UserRegisterInput;
+  warehouseDestinyName: WarehouseDestinyName;
+  warehouseOriginName: WarehouseOriginName;
   woocommerceOrder: WoocommerceOrder;
 };
 
@@ -2564,7 +2608,7 @@ export type DockResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DocumentsStatusesResolvers<ContextType = any, ParentType extends ResolversParentTypes['DocumentsStatuses'] = ResolversParentTypes['DocumentsStatuses']> = {
+export type DocumentStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['DocumentStatus'] = ResolversParentTypes['DocumentStatus']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2655,7 +2699,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createRole?: Resolver<ResolversTypes['returnRole'], ParentType, ContextType, RequireFields<MutationCreateRoleArgs, 'input'>>;
   createSchedule?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateScheduleArgs, 'inputSchedule'>>;
   createSulogDoc?: Resolver<Array<Maybe<ResolversTypes['sulogDoc']>>, ParentType, ContextType, RequireFields<MutationCreateSulogDocArgs, 'ordersId'>>;
-  createTransferRequest?: Resolver<Maybe<ResolversTypes['returnTransferRequest']>, ParentType, ContextType, RequireFields<MutationCreateTransferRequestArgs, 'inputProducts' | 'inputTransferRequest'>>;
+  createTransferRequest?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationCreateTransferRequestArgs, 'inputProducts' | 'inputTransferRequest'>>;
   createUserPermission?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCreateUserPermissionArgs, 'modules' | 'userID'>>;
   decryptToken?: Resolver<ResolversTypes['tokenDecrypted'], ParentType, ContextType, RequireFields<MutationDecryptTokenArgs, 'token'>>;
   decryptTokenApp?: Resolver<ResolversTypes['tokenDecryptedApp'], ParentType, ContextType, RequireFields<MutationDecryptTokenAppArgs, 'token'>>;
@@ -2679,12 +2723,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   getAllUserPermissions?: Resolver<Array<ResolversTypes['userModule']>, ParentType, ContextType, RequireFields<MutationGetAllUserPermissionsArgs, 'userID'>>;
   getAllUsersExport?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
   getFullAddressByZipcode?: Resolver<ResolversTypes['getFullAddressCatalog'], ParentType, ContextType, RequireFields<MutationGetFullAddressByZipcodeArgs, 'zipCode'>>;
-  getInfoProvider?: Resolver<Array<ResolversTypes['Provider']>, ParentType, ContextType, RequireFields<MutationGetInfoProviderArgs, 'inputProvider'>>;
   getProductSap?: Resolver<Maybe<Array<Maybe<ResolversTypes['Products']>>>, ParentType, ContextType, RequireFields<MutationGetProductSapArgs, 'searchQuery' | 'warehouseCode'>>;
   getQuotesOrdersLinesById?: Resolver<Array<Maybe<ResolversTypes['QuotesOrdersLines']>>, ParentType, ContextType, RequireFields<MutationGetQuotesOrdersLinesByIdArgs, never>>;
   getSapBusinessPartnerSellerById?: Resolver<Maybe<ResolversTypes['SapBusinessPartner']>, ParentType, ContextType, RequireFields<MutationGetSapBusinessPartnerSellerByIdArgs, never>>;
   getSapPurchasesOrdersByProvider?: Resolver<Maybe<ResolversTypes['SapPurchasesOrdersByProviderRowsCount']>, ParentType, ContextType, RequireFields<MutationGetSapPurchasesOrdersByProviderArgs, never>>;
   getSapPurchasesOrdersLinesByPurchaseOrdersId?: Resolver<Array<Maybe<ResolversTypes['SapPurchasesOrdersLines']>>, ParentType, ContextType, RequireFields<MutationGetSapPurchasesOrdersLinesByPurchaseOrdersIdArgs, never>>;
+  getScheduleDocksByScheduleId?: Resolver<Array<Maybe<ResolversTypes['ScheduleDocks']>>, ParentType, ContextType, RequireFields<MutationGetScheduleDocksByScheduleIdArgs, 'scheduleId'>>;
   getScheduleOrdersLinesByScheduleId?: Resolver<Array<Maybe<ResolversTypes['QuotesOrdersLines']>>, ParentType, ContextType, RequireFields<MutationGetScheduleOrdersLinesByScheduleIdArgs, never>>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationGetUserArgs, 'userID'>>;
   isOrderOpen?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationIsOrderOpenArgs, 'id'>>;
@@ -2918,7 +2962,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getCommodityReceiptByScheduleId?: Resolver<Array<Maybe<ResolversTypes['commodityReceipt']>>, ParentType, ContextType>;
   getConfigSys?: Resolver<ResolversTypes['configSys'], ParentType, ContextType>;
   getDocks?: Resolver<Array<Maybe<ResolversTypes['Dock']>>, ParentType, ContextType>;
-  getDocumentsStatuses?: Resolver<Array<ResolversTypes['DocumentsStatuses']>, ParentType, ContextType>;
+  getDocumentStatus?: Resolver<Array<ResolversTypes['DocumentStatus']>, ParentType, ContextType>;
   getInProcessOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetInProcessOrdersArgs, never>>;
   getInRouteOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetInRouteOrdersArgs, never>>;
   getInternalNotes?: Resolver<Array<ResolversTypes['InternalNotes']>, ParentType, ContextType, RequireFields<QueryGetInternalNotesArgs, 'orderId'>>;
@@ -2929,15 +2973,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getOneRole?: Resolver<Maybe<ResolversTypes['RolesCatalog']>, ParentType, ContextType, RequireFields<QueryGetOneRoleArgs, 'id'>>;
   getOneStore?: Resolver<Maybe<ResolversTypes['StoresCatalog']>, ParentType, ContextType, RequireFields<QueryGetOneStoreArgs, 'id'>>;
   getOneSulogDoc?: Resolver<Maybe<ResolversTypes['sulogDoc']>, ParentType, ContextType, RequireFields<QueryGetOneSulogDocArgs, 'id'>>;
-  getOneTransferRequest?: Resolver<Maybe<ResolversTypes['transfersRequestCatalog']>, ParentType, ContextType, RequireFields<QueryGetOneTransferRequestArgs, 'id'>>;
+  getOneTransferRequest?: Resolver<Maybe<ResolversTypes['returnTransferRequest']>, ParentType, ContextType, RequireFields<QueryGetOneTransferRequestArgs, 'id'>>;
   getOrderById?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryGetOrderByIdArgs, 'id'>>;
   getOrderByIdAndStatus?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryGetOrderByIdAndStatusArgs, 'id'>>;
   getPackingOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetPackingOrdersArgs, never>>;
   getPendingOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetPendingOrdersArgs, never>>;
   getPickingOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetPickingOrdersArgs, never>>;
-  getQuotes?: Resolver<Array<ResolversTypes['quotesData']>, ParentType, ContextType>;
   getQuotesOrdersLines?: Resolver<Array<Maybe<ResolversTypes['QuotesOrdersLines']>>, ParentType, ContextType>;
-  getQuotesOrdersLinesByQuotesId?: Resolver<Array<Maybe<ResolversTypes['QuotesOrdersLines']>>, ParentType, ContextType, RequireFields<QueryGetQuotesOrdersLinesByQuotesIdArgs, never>>;
   getReason?: Resolver<Array<ResolversTypes['reasonsData']>, ParentType, ContextType, RequireFields<QueryGetReasonArgs, 'orderId'>>;
   getRejectedOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetRejectedOrdersArgs, never>>;
   getSapBusinessPartner?: Resolver<Maybe<ResolversTypes['SapBusinessPartnerRowsCount']>, ParentType, ContextType, RequireFields<QueryGetSapBusinessPartnerArgs, never>>;
@@ -2951,6 +2993,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getSapPurchasesOrdersQuotes?: Resolver<Maybe<ResolversTypes['SapPurchasesOrdersQuotesRowsCount']>, ParentType, ContextType, RequireFields<QueryGetSapPurchasesOrdersQuotesArgs, never>>;
   getSapPurchasesOrdersQuotesById?: Resolver<ResolversTypes['SapPurchasesOrdersQuotesById'], ParentType, ContextType, RequireFields<QueryGetSapPurchasesOrdersQuotesByIdArgs, never>>;
   getSapWarehouses?: Resolver<Array<ResolversTypes['SapWarehouses']>, ParentType, ContextType, RequireFields<QueryGetSapWarehousesArgs, never>>;
+  getSchedule?: Resolver<Array<Maybe<ResolversTypes['Schedule']>>, ParentType, ContextType>;
+  getScheduleOrdersLinesByScheduleId?: Resolver<Array<Maybe<ResolversTypes['QuotesOrdersLines']>>, ParentType, ContextType, RequireFields<QueryGetScheduleOrdersLinesByScheduleIdArgs, never>>;
   getShippedOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetShippedOrdersArgs, never>>;
   getTimeline?: Resolver<Maybe<Array<Maybe<ResolversTypes['Timeline']>>>, ParentType, ContextType, RequireFields<QueryGetTimelineArgs, 'id'>>;
   getToStockOrders?: Resolver<Maybe<ResolversTypes['OrderRowsCount']>, ParentType, ContextType, RequireFields<QueryGetToStockOrdersArgs, never>>;
@@ -2964,8 +3008,8 @@ export type QuotesOrdersLinesResolvers<ContextType = any, ParentType extends Res
   purchases_orders_lines?: Resolver<Maybe<ResolversTypes['SapPurchasesOrdersLines']>, ParentType, ContextType>;
   sap_purchases_orders_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   sap_purchases_orders_lines_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  schedule?: Resolver<Maybe<ResolversTypes['quotesData']>, ParentType, ContextType>;
-  schedule_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  schedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType>;
+  schedule_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3197,6 +3241,28 @@ export type SapWarehousesResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
+  comments?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  document_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  document_status_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  document_time_end?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  document_time_start?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  scheduleLines?: Resolver<Maybe<Array<Maybe<ResolversTypes['QuotesOrdersLines']>>>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['Status']>, ParentType, ContextType>;
+  warehouse?: Resolver<Maybe<ResolversTypes['SapWarehouses']>, ParentType, ContextType>;
+  warehouse_code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduleDocksResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduleDocks'] = ResolversParentTypes['ScheduleDocks']> = {
+  dock?: Resolver<Maybe<ResolversTypes['Dock']>, ParentType, ContextType>;
+  dock_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  schedule_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ShippingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Shipping'] = ResolversParentTypes['Shipping']> = {
   address_1?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   address_2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3421,7 +3487,7 @@ export type CommodityReceiptResolvers<ContextType = any, ParentType extends Reso
   purchases_orders_lines_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   receipt_quantity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   schedule_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  schedules?: Resolver<Maybe<ResolversTypes['quotesData']>, ParentType, ContextType>;
+  schedules?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3538,6 +3604,12 @@ export type MunicipalitiesCatalogSepomexResolvers<ContextType = any, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type NameProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['nameProduct'] = ResolversParentTypes['nameProduct']> = {
+  item_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  item_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type NewPickingResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['newPickingResponse'] = ResolversParentTypes['newPickingResponse']> = {
   order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
   warehouseOrder?: Resolver<Maybe<ResolversTypes['AppOrderWarehouse']>, ParentType, ContextType>;
@@ -3547,22 +3619,6 @@ export type NewPickingResponseResolvers<ContextType = any, ParentType extends Re
 export type PlatformCatalogResolvers<ContextType = any, ParentType extends ResolversParentTypes['platformCatalog'] = ResolversParentTypes['platformCatalog']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type QuotesDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['quotesData'] = ResolversParentTypes['quotesData']> = {
-  comments?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dock?: Resolver<Maybe<ResolversTypes['Dock']>, ParentType, ContextType>;
-  dock_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  document_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  document_schedule_orders_lines?: Resolver<Maybe<ResolversTypes['QuotesOrdersLines']>, ParentType, ContextType>;
-  document_status_id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  document_time_end?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  document_time_start?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  status?: Resolver<Maybe<ResolversTypes['Status']>, ParentType, ContextType>;
-  warehouse?: Resolver<Maybe<ResolversTypes['SapWarehouses']>, ParentType, ContextType>;
-  warehouse_code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3605,6 +3661,8 @@ export type ReturnTransferRequestResolvers<ContextType = any, ParentType extends
   series_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   to_whs_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  warehouse_destiny_name?: Resolver<Maybe<ResolversTypes['warehouseDestinyName']>, ParentType, ContextType>;
+  warehouse_origin_name?: Resolver<Maybe<ResolversTypes['warehouseOriginName']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3689,6 +3747,7 @@ export type TransfersProductsResolvers<ContextType = any, ParentType extends Res
   line_num?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   line_status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   line_total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  name_product?: Resolver<Maybe<ResolversTypes['nameProduct']>, ParentType, ContextType>;
   open_quantity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   price?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   quantity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -3715,6 +3774,8 @@ export type TransfersRequestCatalogResolvers<ContextType = any, ParentType exten
   series_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   to_whs_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  warehouse_destiny_name?: Resolver<Maybe<ResolversTypes['warehouseDestinyName']>, ParentType, ContextType>;
+  warehouse_origin_name?: Resolver<Maybe<ResolversTypes['warehouseOriginName']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3768,6 +3829,18 @@ export type UserModuleResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type WarehouseDestinyNameResolvers<ContextType = any, ParentType extends ResolversParentTypes['warehouseDestinyName'] = ResolversParentTypes['warehouseDestinyName']> = {
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  warehouse_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type WarehouseOriginNameResolvers<ContextType = any, ParentType extends ResolversParentTypes['warehouseOriginName'] = ResolversParentTypes['warehouseOriginName']> = {
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  warehouse_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type WoocommerceOrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['woocommerceOrder'] = ResolversParentTypes['woocommerceOrder']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3780,7 +3853,7 @@ export type Resolvers<ContextType = any> = {
   AppUser?: AppUserResolvers<ContextType>;
   BusinessPartner?: BusinessPartnerResolvers<ContextType>;
   Dock?: DockResolvers<ContextType>;
-  DocumentsStatuses?: DocumentsStatusesResolvers<ContextType>;
+  DocumentStatus?: DocumentStatusResolvers<ContextType>;
   FileUpload?: FileUploadResolvers<ContextType>;
   InternalNotes?: InternalNotesResolvers<ContextType>;
   IssusesDetails?: IssusesDetailsResolvers<ContextType>;
@@ -3823,6 +3896,8 @@ export type Resolvers<ContextType = any> = {
   SapPurchasesOrdersQuotesRowsCount?: SapPurchasesOrdersQuotesRowsCountResolvers<ContextType>;
   SapPurchasesOrdersRowsCount?: SapPurchasesOrdersRowsCountResolvers<ContextType>;
   SapWarehouses?: SapWarehousesResolvers<ContextType>;
+  Schedule?: ScheduleResolvers<ContextType>;
+  ScheduleDocks?: ScheduleDocksResolvers<ContextType>;
   Shipping?: ShippingResolvers<ContextType>;
   Status?: StatusResolvers<ContextType>;
   Store?: StoreResolvers<ContextType>;
@@ -3860,9 +3935,9 @@ export type Resolvers<ContextType = any> = {
   moduleInfo?: ModuleInfoResolvers<ContextType>;
   municipalitiesCatalog?: MunicipalitiesCatalogResolvers<ContextType>;
   municipalitiesCatalogSepomex?: MunicipalitiesCatalogSepomexResolvers<ContextType>;
+  nameProduct?: NameProductResolvers<ContextType>;
   newPickingResponse?: NewPickingResponseResolvers<ContextType>;
   platformCatalog?: PlatformCatalogResolvers<ContextType>;
-  quotesData?: QuotesDataResolvers<ContextType>;
   reasonsData?: ReasonsDataResolvers<ContextType>;
   returnRole?: ReturnRoleResolvers<ContextType>;
   returnStore?: ReturnStoreResolvers<ContextType>;
@@ -3883,6 +3958,8 @@ export type Resolvers<ContextType = any> = {
   userContacts?: UserContactsResolvers<ContextType>;
   userData?: UserDataResolvers<ContextType>;
   userModule?: UserModuleResolvers<ContextType>;
+  warehouseDestinyName?: WarehouseDestinyNameResolvers<ContextType>;
+  warehouseOriginName?: WarehouseOriginNameResolvers<ContextType>;
   woocommerceOrder?: WoocommerceOrderResolvers<ContextType>;
 };
 

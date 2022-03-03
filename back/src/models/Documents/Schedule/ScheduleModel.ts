@@ -3,7 +3,6 @@ import sequelize from '../../../db/connection'
 
 interface ScheduleAttributes {
   id: number
-  dock_id: number
   document_date: string // Fecha de cita
   document_time_start: string // Hora de cita inicio
   document_time_end: string //Hora de cita fin
@@ -25,7 +24,6 @@ class Schedule
   implements ScheduleAttributes
 {
   public id!: number
-  public dock_id!: number
   public document_date!: string
   public document_time_start!: string
   public document_time_end!: string
@@ -43,10 +41,6 @@ Schedule.init(
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
-    },
-    dock_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
     },
     document_date: {
         type: DataTypes.STRING,

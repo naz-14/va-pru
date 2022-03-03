@@ -18,7 +18,8 @@ const ShippingCompanies_1 = __importDefault(require("../../../../models/Catalogs
 const TimeLineAdd_1 = require("../../../../helpers/TimeLineAdd");
 const connection_1 = __importDefault(require("../../../../db/connection"));
 const ApiSapReceiver_1 = __importDefault(require("../../../../helpers/ApiSapReceiver"));
-const OrderInvoiceModel_1 = __importDefault(require("../../../../models/Catalogs/Orders/OrderInvoiceModel"));
+const moment_1 = __importDefault(require("moment"));
+const PlatformOrderCounter_1 = __importDefault(require("../../../../models/Catalogs/Orders/PlatformOrderCounter"));
 const orderNotFound = 'No se encontro el pedido';
 const logisticNotFound = 'No se encontro el empresa de logística';
 const defaultError = 'Algo salio mal, vuelve a intentar';
@@ -110,58 +111,33 @@ const billingOrdersResolver = {
             }
         }),
         billingProcess: (_, { order_id }, context) => __awaiter(void 0, void 0, void 0, function* () {
-            const PrincipalOrder = yield OrderModel_1.default.findOne({
-                where: { id: order_id },
-            });
-            const resp = yield (0, ApiSapReceiver_1.default)([
-                {
-                    key: `${order_id}`,
-                    name: 'createOrder',
-                    values: { order_id },
-                },
-            ]);
-            const data = resp[0].result;
-            if (data.statusCode === 200) {
-                const transaction = yield connection_1.default.transaction();
-                try {
-                    const invoice = yield OrderInvoiceModel_1.default.create({
-                        order_id,
-                        invoice_doc_num: data.invoiceDocNum,
-                        num_at_card: data.numAtCard,
-                        invoice_url: 'https://www.google.com',
-                        is_active: true,
-                    }, { transaction });
-                    yield OrderModel_1.default.update({
-                        order_doc_num: data.orderDocNum,
-                        num_at_card: data.numAtCard,
-                        user_id: context.userId,
-                        invoice_id: invoice.id,
-                    }, { where: { id: order_id }, transaction });
-                    yield transaction.commit();
-                    return true;
-                }
-                catch (e) {
-                    yield transaction.rollback();
-                    return false;
-                }
-            }
-            const transaction = yield connection_1.default.transaction();
             try {
-                const invoice = yield OrderInvoiceModel_1.default.create({
-                    order_id,
-                    is_active: true,
-                }, { transaction });
-                yield OrderModel_1.default.update({
-                    order_doc_num: data.orderDocNum,
-                    num_at_card: data.numAtCard,
-                    user_id: context.userId,
-                    invoice_id: invoice.id,
-                }, { where: { order_id }, transaction });
-                yield transaction.commit();
-                return true;
+                const PrincipalOrder = yield OrderModel_1.default.findOne({
+                    where: { id: order_id },
+                });
+                const counter = yield PlatformOrderCounter_1.default.findOne({
+                    where: {
+                        id: 1,
+                    },
+                });
+                const actualOrder = counter.count || 0;
+                const newOrder = `${actualOrder + 1}`;
+                const code = `${(0, moment_1.default)().format('YYYYMMDD')}PO${newOrder.padStart(6, '0')}`; // PO means Platform Order
+                const resp = yield (0, ApiSapReceiver_1.default)([
+                    {
+                        key: code,
+                        name: 'createOrder',
+                        values: { order_id },
+                    },
+                ]);
+                counter.count = actualOrder + 1;
+                yield counter.save();
+                // const data = resp.result
+                return resp[0].result.statusCode === 200;
+                // return data.statusCode === 200
             }
-            catch (e) {
-                yield transaction.rollback();
+            catch (error) {
+                console.log(error);
                 return false;
             }
         }),

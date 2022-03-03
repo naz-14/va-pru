@@ -92,27 +92,27 @@ const CommodityReceiptResolver = {
         })
     },
     commodityReceipt: {
-    // schedules: async ({ schedule_id }) => {
-    //     return await Schedule.findOne({
-    //         where: {
-    //             id: schedule_id,
-    //         },
-    //     })
-    // },
-    // purchases_orders: async ({ purchases_orders_id }) => {
-    //     return await SapPurchasesOrders.findOne({
-    //         where: {
-    //             id: purchases_orders_id,
-    //         },
-    //     })
-    // },
-    // purchases_orders_lines: async ({ purchases_orders_lines_id }) => {
-    //     return await SapPurchasesOrdersLines.findOne({
-    //         where: {
-    //             id: purchases_orders_lines_id,
-    //         },
-    //     })
-    // },
+        schedules: ({ schedule_id }) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield ScheduleModel_1.default.findOne({
+                where: {
+                    id: schedule_id,
+                },
+            });
+        }),
+        // purchases_orders: async ({ purchases_orders_id }) => {
+        //     return await SapPurchasesOrders.findOne({
+        //         where: {
+        //             id: purchases_orders_id,
+        //         },
+        //     })
+        // },
+        // purchases_orders_lines: async ({ purchases_orders_lines_id }) => {
+        //     return await SapPurchasesOrdersLines.findOne({
+        //         where: {
+        //             id: purchases_orders_lines_id,
+        //         },
+        //     })
+        // },
     }
 };
 exports.default = CommodityReceiptResolver;

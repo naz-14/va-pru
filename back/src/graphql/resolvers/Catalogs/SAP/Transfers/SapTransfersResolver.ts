@@ -3,10 +3,11 @@ import { Op } from 'sequelize'
 import { Resolvers } from '../../../../generated'
 import TransferRequestModel from '../../../../../models/Catalogs/SAP/Transfers/SapInventoryTransfersRequestModel'
 import TransferRequestLineModel from '../../../../../models/Catalogs/SAP/Transfers/SapInventoryTransferLineModel'
+import SapWarehousesModel from '../../../../../models/Catalogs/SAP/Warehouses/SapWarehousesModel'
 import moment from 'moment'
 import ApiSapReceiver from '../../../../../helpers/ApiSapReceiver'
+import SapItemsModel from '../../../../../models/Catalogs/SAP/Items/SapItemsModel'
 
-const TransferRequestExist = 'Ya existe un registro con este nombre'
 const TransferRequestNotExist = 'El registro no existe'
 const defaultError = 'Algo salio mal, vuelve a intentar en unos minutos'
 
@@ -58,11 +59,8 @@ const SapTransferRequestResolver: Resolvers = {
       _,
       { inputTransferRequest, inputProducts }
     ) => {
-      const transaction = await sequelize.transaction() //START TRANSACTION
+      const transaction = await sequelize.transaction()
       try {
-        //HERE GOES THE SAP REQUEST FOR THE TRANSFER
-        // const requestTransferSAP = true
-
         const { doc_date, comments, from_whs_code, to_whs_code } =
           inputTransferRequest
 
@@ -79,7 +77,7 @@ const SapTransferRequestResolver: Resolvers = {
           { transaction }
         )
 
-        inputProducts.map(async (product) => {
+        for await (let product of inputProducts) {
           const { item_code, quantity, open_quantity } = product as any
 
           await TransferRequestLineModel.create(
@@ -91,29 +89,68 @@ const SapTransferRequestResolver: Resolvers = {
             },
             { transaction }
           )
-        })
-
-        const requestTransferSAP = await ApiSapReceiver([
-          {
-            key: newTransferRequest.id,
-            name: 'createInventoryTransferRequest',
-            values: { id: newTransferRequest.id },
-          },
-        ])
-
-        if (requestTransferSAP) {
-          await transaction.rollback()
-          return Promise.reject(Error(requestTransferSAP))
         }
+
+        // const requestTransferSAP = await ApiSapReceiver([
+        //   {
+        //     key: newTransferRequest.id,
+        //     name: 'createInventoryTransferRequest',
+        //     values: { id: newTransferRequest.id },
+        //   },
+        // ])
+
+        // if (requestTransferSAP) {
+        //   await transaction.rollback()
+        //   return Promise.reject(Error(requestTransferSAP))
+        // }
 
         await transaction.commit()
 
-        return newTransferRequest
+        return true
       } catch (error) {
         await transaction.rollback()
-        console.log(error)
         return Promise.reject(Error(defaultError))
       }
+    },
+  },
+
+  transfersRequestCatalog: {
+    warehouse_origin_name: async ({ from_whs_code }) => {
+      return await SapWarehousesModel.findOne({
+        where: { warehouse_code: from_whs_code },
+      })
+    },
+
+    warehouse_destiny_name: async ({ to_whs_code }) => {
+      return await SapWarehousesModel.findOne({
+        where: { warehouse_code: to_whs_code },
+      })
+    },
+  },
+
+  returnTransferRequest: {
+    products: async ({ id }) => {
+      return await TransferRequestLineModel.findAll({
+        where: { inventory_transfer_id: id },
+      })
+    },
+
+    warehouse_origin_name: async ({ from_whs_code }) => {
+      return await SapWarehousesModel.findOne({
+        where: { warehouse_code: from_whs_code },
+      })
+    },
+
+    warehouse_destiny_name: async ({ to_whs_code }) => {
+      return await SapWarehousesModel.findOne({
+        where: { warehouse_code: to_whs_code },
+      })
+    },
+  },
+
+  transfersProducts: {
+    name_product: async ({ item_code }) => {
+      return await SapItemsModel.findOne({ where: { item_code } })
     },
   },
 }

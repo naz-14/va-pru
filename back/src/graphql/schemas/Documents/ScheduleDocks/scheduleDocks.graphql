@@ -1,0 +1,10 @@
+type ScheduleDocks{
+    id: Int!
+    schedule_id: Int!
+    dock_id: Int!
+    dock: Dock
+}
+
+type Mutation{
+    getScheduleDocksByScheduleId(scheduleId: Int!): [ScheduleDocks]!
+}

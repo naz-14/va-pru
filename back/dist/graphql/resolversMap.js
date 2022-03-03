@@ -36,7 +36,7 @@ const pickingOrders_1 = __importDefault(require("./resolvers/Catalogs/Orders/pic
 const packingOrders_1 = __importDefault(require("./resolvers/Catalogs/Orders/packingOrders"));
 const OrdersWarehouse_1 = __importDefault(require("./resolvers/App/Catalogs/OrdersWarehouse/OrdersWarehouse"));
 const ReasonsResolver_1 = __importDefault(require("./resolvers/Catalogs/Reasons/ReasonsResolver"));
-const DocumentStatusResolver_1 = __importDefault(require("./resolvers/Catalogs/Documents/DocumentStatusResolver"));
+const StatusResolver_1 = __importDefault(require("./resolvers/Documents/Status/StatusResolver"));
 const SapListPricesItemsResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/ListPricesItems/SapListPricesItemsResolver"));
 const SapListPricesResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/ListPrices/SapListPricesResolver"));
 const SapItemsResolver_1 = __importDefault(require("./resolvers/Catalogs/SAP/Items/SapItemsResolver"));
@@ -53,6 +53,7 @@ const ScheduleOrdersLinesResolver_1 = __importDefault(require("./resolvers/Docum
 const ScheduleResolver_1 = __importDefault(require("./resolvers/Documents/Schedule/ScheduleResolver"));
 const DocksResolver_1 = __importDefault(require("./resolvers/Catalogs/Docks/DocksResolver"));
 const CommodityReceipt_1 = __importDefault(require("./resolvers/Documents/CommodityReceipt/CommodityReceipt"));
+const ScheduleDocksResolver_1 = __importDefault(require("./resolvers/Documents/ScheduleDocks/ScheduleDocksResolver"));
 const resolversMap = (0, lodash_1.merge)([
     UserResolver_1.default,
     AuthResolver_1.default,
@@ -86,7 +87,7 @@ const resolversMap = (0, lodash_1.merge)([
     packingOrders_1.default,
     OrdersWarehouse_1.default,
     ReasonsResolver_1.default,
-    DocumentStatusResolver_1.default,
+    StatusResolver_1.default,
     SapListPricesItemsResolver_1.default,
     SapListPricesResolver_1.default,
     SapItemsResolver_1.default,
@@ -103,5 +104,6 @@ const resolversMap = (0, lodash_1.merge)([
     ScheduleOrdersLinesResolver_1.default,
     DocksResolver_1.default,
     CommodityReceipt_1.default,
+    ScheduleDocksResolver_1.default,
 ]);
 exports.default = resolversMap;

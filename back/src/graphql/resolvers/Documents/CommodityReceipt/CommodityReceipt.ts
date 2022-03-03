@@ -83,13 +83,13 @@ const CommodityReceiptResolver: Resolvers = {
         }
     },
     commodityReceipt: {
-        // schedules: async ({ schedule_id }) => {
-        //     return await Schedule.findOne({
-        //         where: {
-        //             id: schedule_id,
-        //         },
-        //     })
-        // },
+        schedules: async ({ schedule_id }) => {
+            return await Schedule.findOne({
+                where: {
+                    id: schedule_id,
+                },
+            })
+        },
         // purchases_orders: async ({ purchases_orders_id }) => {
         //     return await SapPurchasesOrders.findOne({
         //         where: {

@@ -22,7 +22,11 @@ const SapProducts = {
         getProductSap: (_, { warehouseCode, searchQuery }) => __awaiter(void 0, void 0, void 0, function* () {
             let list = [];
             const clause = {
-                where: { warehouse_code: warehouseCode, locked: 'N' },
+                where: {
+                    warehouse_code: warehouseCode,
+                    locked: 'N',
+                    on_hand: { [sequelize_1.Op.gt]: 0 },
+                },
                 include: [
                     {
                         model: SapItemsModel_1.default,
