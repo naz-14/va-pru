@@ -34,7 +34,7 @@ const timelineResolver = {
             return yield OrderStatusModel_1.default.findOne({ where: { id: status_id } });
         }),
         user: ({ user_id, status_id }) => __awaiter(void 0, void 0, void 0, function* () {
-            if (status_id === 1 || status_id === 8) {
+            if (status_id === 9 || status_id === 10) {
                 return yield AppUser_1.default.findOne({ where: { id: user_id } });
             }
             return yield UserModel_1.default.findOne({ where: { id: user_id } });

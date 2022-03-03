@@ -23,7 +23,7 @@ const timelineResolver: Resolvers = {
       return await OrderStatus.findOne({ where: { id: status_id } })
     },
     user: async ({ user_id, status_id }) => {
-      if (status_id === 1 || status_id === 8) {
+      if (status_id === 9 || status_id === 10) {
         return await AppUser.findOne({ where: { id: user_id } })
       }
       return await User.findOne({ where: { id: user_id } })
